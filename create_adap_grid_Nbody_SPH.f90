@@ -1,7 +1,5 @@
-PROGRAM create_adap_grid_Nbody_SPH
-  ! This program creates the main 3D grid for the TRUST I benchmark
-  ! The model parameters can be expressed below and user-defined parameters and function have to be expressed in user_routines module
-  ! Smooth_grid_routines contains the routines to subdivide the grid 
+! This program creates the main 3D grid for Nbody/SPH simulations.
+PROGRAM create_adap_grid_Nbody_SPH  
   use iso_fortran_env
   use smooth_grid_routines
   use user_routines_Nbody_SPH
