@@ -16,6 +16,8 @@ MODULE io_routines
   character(LEN=lcar) :: label_model
   !> @param label_model_out Label contained in all the output file names. 
   character(LEN=lcar) :: label_model_out
+  !> @param label_model_out_i_obs Label contained in all the output file names for the i_obs and i_obs_dust RT algorithm. If not provided, it is set automatically to label_model_out().
+  character(LEN=lcar) :: label_model_out_i_obs
   !> @param label_model_lambda_grid Label model within grid_file_lambda() 
   character(LEN=lcar) :: label_model_lambda_grid
   !> @param label_wave Wavelength label for a single wavelength.
@@ -171,7 +173,7 @@ MODULE io_routines
   
   
   ! INPUT NAMELIST ! 
-  namelist /dartray_input_strings/ label_model_lambda_grid,label_model_out, file_dir_out, file_pos_obs, file_p_src, file_lambda_list, dir_runs, dir_grid,   grid_file, rt_algorithm, units_luminosity, units_csize, units_lambda,dust_model,dust_opacity_tables, file_gra_fa, file_sil_fa, file_pah_neu_fa, file_pah_ion_fa, file_av_opacities, dust_heating_type, file_q_gra, file_q_sil, file_q_pah_neu, file_q_pah_ion, file_calorimetry_Gra, file_calorimetry_Sil,file_nbody_sph,file_stellar_library,stellar_library, param_to_project, file_param_src
+  namelist /dartray_input_strings/ label_model_lambda_grid,label_model_out,label_model_out_i_obs, file_dir_out, file_pos_obs, file_p_src, file_lambda_list, dir_runs, dir_grid,   grid_file, rt_algorithm, units_luminosity, units_csize, units_lambda,dust_model,dust_opacity_tables, file_gra_fa, file_sil_fa, file_pah_neu_fa, file_pah_ion_fa, file_av_opacities, dust_heating_type, file_q_gra, file_q_sil, file_q_pah_neu, file_q_pah_ion, file_calorimetry_Gra, file_calorimetry_Sil,file_nbody_sph,file_stellar_library,stellar_library, param_to_project, file_param_src
   namelist /dartray_input_var/ kp_sca_max, rad_lim, accuracy, conv_en_lim, bm_par,   bm_par_sca, bm_par_max, lambda_ref,max_lambda_stars, min_lambda_dust, dist_obs,ind_i_obs, ind_out_maps, n_dust_size_qabs, n_dust_wave_qabs, tau_cell_max, n_dust_temp_cal, npixel_maps, map_size_factor, kp_maps, x_wall_coord, y_wall_coord, z_wall_coord, z_sun, max_sca_iterations, n_int_rf_bins
   namelist /dartray_input_logical/ print_scaspe_tot, print_output_part1, print_output_part2, print_scaspe_part2, restore_file_mpi, use_lambda_grid, use_dir_out,  use_pos_obs, use_p_src,print_psel_av, sequential_scattering, print_sed,input_av_opacities, no_communications, no_dust_rt,only_direct_rt, test_run, print_maps, print_maps_in, x_wall_on, y_wall_on, z_wall_on, use_stellar_library, limit_scattering_iterations 
 
@@ -799,18 +801,18 @@ endif
 
 
 do i = 0, lnum -1 
-   file_i_obs_part2_arr(i)='grid_'//trim(adjustl(label_model_out))//'_l'//trim(adjustl(label_wave_arr(i+i0)))//'um_i_obs_part2'//trim(adjustl(chext))//'_int.h5'
-   file_i_obs_arr(i)='grid_'//trim(adjustl(label_model_out))//'_l'//trim(adjustl(label_wave_arr(i+i0)))//'um_i_obs'//trim(adjustl(chext))//'_int.h5'
-   file_i_obs_in_part2_arr(i)='grid_'//trim(adjustl(label_model_out))//'_l'//trim(adjustl(label_wave_arr(i+i0)))//'um_i_obs_in_part2'//trim(adjustl(chext))//'_int.h5'
-   file_i_obs_in_arr(i)='grid_'//trim(adjustl(label_model_out))//'_l'//trim(adjustl(label_wave_arr(i+i0)))//'um_i_obs_in'//trim(adjustl(chext))//'_int.h5'
+   file_i_obs_part2_arr(i)='grid_'//trim(adjustl(label_model_out_i_obs))//'_l'//trim(adjustl(label_wave_arr(i+i0)))//'um_i_obs_part2'//trim(adjustl(chext))//'_int.h5'
+   file_i_obs_arr(i)='grid_'//trim(adjustl(label_model_out_i_obs))//'_l'//trim(adjustl(label_wave_arr(i+i0)))//'um_i_obs'//trim(adjustl(chext))//'_int.h5'
+   file_i_obs_in_part2_arr(i)='grid_'//trim(adjustl(label_model_out_i_obs))//'_l'//trim(adjustl(label_wave_arr(i+i0)))//'um_i_obs_in_part2'//trim(adjustl(chext))//'_int.h5'
+   file_i_obs_in_arr(i)='grid_'//trim(adjustl(label_model_out_i_obs))//'_l'//trim(adjustl(label_wave_arr(i+i0)))//'um_i_obs_in'//trim(adjustl(chext))//'_int.h5'
 enddo
 
-file_sed_arr_dir = 'grid_'//trim(adjustl(label_model_out))//'_sed_dir'//trim(adjustl(chext))//'_int.h5'
-file_sed_arr = 'grid_'//trim(adjustl(label_model_out))//'_sed'//trim(adjustl(chext))//'_int.h5'
-file_maps_part2 = 'grid_'//trim(adjustl(label_model_out))//'_maps_part2'//trim(adjustl(chext))//'_int.h5'
-file_maps = 'grid_'//trim(adjustl(label_model_out))//'_maps'//trim(adjustl(chext))//'_int.h5'
-file_maps_in_part2 = 'grid_'//trim(adjustl(label_model_out))//'_maps_in_part2'//trim(adjustl(chext))//'_int.h5'
-file_maps_in = 'grid_'//trim(adjustl(label_model_out))//'_maps_in'//trim(adjustl(chext))//'_int.h5'
+file_sed_arr_dir = 'grid_'//trim(adjustl(label_model_out_i_obs))//'_sed_dir'//trim(adjustl(chext))//'_int.h5'
+file_sed_arr = 'grid_'//trim(adjustl(label_model_out_i_obs))//'_sed'//trim(adjustl(chext))//'_int.h5'
+file_maps_part2 = 'grid_'//trim(adjustl(label_model_out_i_obs))//'_maps_part2'//trim(adjustl(chext))//'_int.h5'
+file_maps = 'grid_'//trim(adjustl(label_model_out_i_obs))//'_maps'//trim(adjustl(chext))//'_int.h5'
+file_maps_in_part2 = 'grid_'//trim(adjustl(label_model_out_i_obs))//'_maps_in_part2'//trim(adjustl(chext))//'_int.h5'
+file_maps_in = 'grid_'//trim(adjustl(label_model_out_i_obs))//'_maps_in'//trim(adjustl(chext))//'_int.h5'
 
 
 call print_done
@@ -2637,6 +2639,7 @@ subroutine input_initialize
   !label_model = 'not_provided'
   label_model_lambda_grid = 'not_provided'
   label_model_out = 'not_provided'   
+  label_model_out_i_obs = 'not_provided'   
   file_dir_out = 'not_provided'  
   file_pos_obs = 'not_provided' 
   file_p_src = 'not_provided'
@@ -2822,7 +2825,15 @@ subroutine check_input
   if (use_dir_out .and. (rt_algorithm_ID == rta_2D .or. rt_algorithm_ID == rta_dust2D)) then
      if (main_prc) print *, 'WARNING: use_dir_out not allowed for rt_algorithm = 2D. Set to FALSE.'
      use_dir_out = .FALSE.
+     print_sed = .FALSE.
   endif
+
+  ! assign use_pos_obs to false if rt_algorithm == '2D'
+  if (use_pos_obs .and. (rt_algorithm_ID == rta_2D .or. rt_algorithm_ID == rta_dust2D)) then
+     if (main_prc) print *, 'WARNING: use_pos_obs not allowed for rt_algorithm = 2D. Set to FALSE.'
+     use_pos_obs = .FALSE.
+  endif
+
 
   ! set no_communications to false if rt_algorithm_ID = rta_i_obs, rta_i_obs_dust and rta_sed
   if (no_communications) then
@@ -2864,6 +2875,13 @@ subroutine check_input
   if (label_model_out == 'not_provided') then
      print *, 'ERROR: Input label_model_out missing'
      error = .TRUE.
+  endif
+
+  ! label_model_out_i_obs 
+  if (rt_algorithm_ID == rta_i_obs .or. rt_algorithm_ID == rta_i_obs_dust) then 
+     if (label_model_out_i_obs == 'not_provided') then 
+        label_model_out_i_obs = label_model_out
+     endif
   endif
 
   ! file_dir_out
