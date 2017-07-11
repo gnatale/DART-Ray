@@ -1,0 +1,48 @@
+&dartray_input_strings 
+label_model_lambda_grid='model_ex1_all',
+label_model_out='model_ex1_all',
+grid_file='grid_model_ex1_main.h5',
+file_dir_out='dir_out_galaxy.dat', 
+file_lambda_list='lambda_list_pt11.dat', 
+dir_runs='./RUNS/GALAXY_EX1',
+dir_grid='./GALAXY_GRIDS/EX1',
+rt_algorithm='i_obs_dust'
+units_lambda = 'um',
+dust_model = 'DraineLi06',
+file_av_opacities = './DUST_OPACITY/DraineLi06/kappagrainwd01_q06_effective.dat',
+param_to_project = 'optical_depth',
+units_csize = 'pc',
+units_luminosity = 'W/Hz',
+dust_heating_type = 'eff'
+/
+&dartray_input_var
+lambda_ref = 0.443
+kp_sca_max=1,    
+rad_lim=0.1, 
+accuracy=0.3, 
+conv_en_lim=0.01,
+bm_par=5,
+bm_par_sca=5, 
+bm_par_max=200, 
+max_lambda_stars = 5,
+min_lambda_dust = 1.,
+dist_obs = 1E6
+npixel_maps = 300
+map_size_factor = 1.8
+z_wall_coord = 0.3, 0.7
+/
+&dartray_input_logical
+use_lambda_grid = .TRUE.,
+use_dir_out = .TRUE.,
+restore_file_mpi = .TRUE.,
+print_sed = .TRUE.
+print_maps = .TRUE.
+print_scaspe_tot = .TRUE. 
+test_run = .FALSE. 
+input_av_opacities = .TRUE.,
+no_communications = .TRUE.
+no_dust_rt = .TRUE.
+z_wall_on = .TRUE.
+/
+
+  

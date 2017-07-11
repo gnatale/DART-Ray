@@ -1,0 +1,89 @@
+&galaxy_input_strings
+label_model_lambda_grid='model_ex1',
+dir_grid='./GALAXY_GRIDS/EX1',
+grid_file='grid_model_ex1_main.h5',
+grid_info_file='grid_model_ex1_info.dat',
+file_lambda_list='lambda_list_pt11.dat',
+units_lambda = 'um',
+grid_type='all',
+old_disk_type='flared_sech2z',
+young_disk_type='flared_sech2z',
+thick_disk_type='flared_sech2z',
+thin_disk_type='flared_sech2z',
+dust_model = 'DraineLi06',
+file_av_opacities = './DUST_OPACITY/DraineLi06/kappagrainwd01_q06_effective.dat'
+file_old_star_sed = 'pt11_old_star_sed.dat'
+file_young_star_sed = 'pt11_young_star_sed.dat'
+subdivision_criteria = 'standard' 
+/ 
+&galaxy_input_var
+lambda_ref= 0.443,   
+lambda_min= 0.090,    
+lambda_max= 5.0 ,
+rtrun=14000., 
+rsun=8000., 
+max_z=4000, 
+max_rad=14000, 
+sha=0.012, 
+sha1 = 0.012
+modelsize = 28000. ,
+base=3,3,   
+max_ncell=3.E6,  
+max_lvl=4,
+min_lvl=2, 
+max_dtau=0.01,
+max_dlum=0.5E-6
+z_subd_lim = 50 
+R_subd_lim = 4000
+/
+&galaxy_input_var_old_disk
+old =0.353,
+hs_disk_b=3200.,   ! B-band scale length 
+zs_disk=140,
+zs_disk_r1=170.,
+zs_disk_rsun=300.,
+chi_disk = 0.5,  
+hsin=4500
+id_hs_disk_arr = 12,13,14,15
+hs_disk_arr = 1800, 2200, 2400, 2600
+/
+&galaxy_input_var_young_disk
+sfr=1.,
+hs_tdisk=3200,    
+zs_tdisk=50,
+zs_tdisk_r1=67,
+zs_tdisk_rsun=90,
+chi_tdisk = 0.5, 
+hs1in=4500,
+/
+&galaxy_input_var_bulge
+reff=400.,
+acap_bulge=40.,
+ellipt=0.3,
+mtrunc=3,
+bd_ratio=1.,
+nsersic=4
+/
+&galaxy_input_var_thick_dust_disk
+tau1= 3.17,    !! B-band tau
+hd_disk=5200.,
+zd_disk=140.,
+zd_disk_r1=140.,
+zd_disk_rsun=140.,
+chi_dust_disk = 0.5, 
+hdin= 4500,
+/
+&galaxy_input_var_thin_dust_disk
+tau2= 0.61 ,   !! B-band tau
+hd_tdisk=3200,
+zd_tdisk=50,
+zd_tdisk_r1=67,
+zd_tdisk_rsun=90,
+chi_dust_tdisk = 0.5, 
+hd1in=4500,
+/
+&galaxy_input_logical
+input_av_opacities = .TRUE.
+/
+
+
