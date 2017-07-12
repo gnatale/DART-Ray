@@ -271,7 +271,7 @@ CONTAINS
  
     call reduce_dens_stars_arr
 
-    call assign_parent_dens_arr  
+    !call assign_parent_dens_arr  
 
     call check_dens_stars_arr
     

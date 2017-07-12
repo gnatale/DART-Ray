@@ -1,0 +1,24 @@
+&trustI_input_strings
+grid_file='grid_trustI_tau0.01_l1um_LD.h5'
+grid_info_file='grid_trustI_tau0.01_l1um_LD_info.dat',
+dir_grid='./TRUSTI_GRIDS/',
+file_lambda_list = 'lambda_list_trustI_basic.dat',
+units_lambda = 'um',
+dust_model = 'TRUST',
+file_av_opacities = './DUST_OPACITY/TRUST/ZDA_BARE_GR_S_Effective.dat'
+subdivision_criteria = 'standard'
+/
+&trustI_input_var
+modelsize =10
+tau_z=0.01
+lambda_ref=1. 
+base=10,2,
+max_ncell=4.E6     
+max_lvl=4
+min_lvl=1.
+max_dtau= 1E-4
+max_dlum=0.
+/
+&trustI_input_logical
+input_av_opacities = .TRUE.,
+/

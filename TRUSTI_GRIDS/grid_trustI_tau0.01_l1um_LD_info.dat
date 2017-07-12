@@ -1,0 +1,16 @@
+  GRID PARAMETERS
+  modelsize =   10.0000000000000     
+  tau_z =  1.000000000000000E-002
+  lambda=  0.000000000000000E+000
+  base =          10           2
+  max_ncell     4000000
+  MAX DTAU PARAM (input)=  1.000000000000000E-004
+  MAX DLUM PARAM (input)=  0.000000000000000E+000
+  MIN NLVL (input)=           1
+  MAX NLVL (input)=           4
+  MAX DTAU (output)=  3.3333334E-03
+  MEAN DTAU (output)=  4.1672587E-04
+  MAX DLUM (output)=  0.0000000E+00
+  MEAN DLUM (output)=  0.0000000E+00
+  MIN CELL SIZE =   0.125000000000000     
+ 

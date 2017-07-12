@@ -384,7 +384,7 @@ end subroutine dartray_projection
   select case (rt_type)
 
   case(rtt_start)
-     call reduce_grid_res
+     !call reduce_grid_res
      call set_en_lim
      call prepare_p_src 
      call calc_total_luminosity
@@ -402,7 +402,7 @@ end subroutine dartray_projection
      endif
 
      if (file_restore) then
-        call restore_grid_original_res
+        !call restore_grid_original_res
         call create_scaspe   ! scattered energy array
         call create_i_obs    ! escaping brigthness array
         call pre_calc_ads_arr
@@ -420,7 +420,7 @@ end subroutine dartray_projection
      call create_mpi_type 
      
   case(rtt_i_obs_dir_cell)
-     call restore_grid_original_res
+     !call restore_grid_original_res
      
   case(rtt_output_part2)
      call update_i_obs_arr
@@ -432,7 +432,7 @@ end subroutine dartray_projection
      iterations= iterations +1
 
      if (iterations == 1) then
-        call reduce_grid_res  !!! this is here because grid resolution has been restored to create output part2 
+        !call reduce_grid_res  !!! this is here because grid resolution has been restored to create output part2 
         call create_scaspe_tot
         if (rt_algorithm_ID == rta_2D .or. rt_algorithm_ID == rta_dust2d .or. sequential_scattering) call create_scaspe_prev                   
         bm_par=bm_par_sca  !!! different bm_par value during scattering iterations       
@@ -449,7 +449,7 @@ end subroutine dartray_projection
         call expand_psel_av_arr
         !read(*,*)
      else
-        call restore_grid_original_res  !!! restore grid res before going to next step 
+        !call restore_grid_original_res  !!! restore grid res before going to next step 
      endif
 
   case(rtt_i_obs)

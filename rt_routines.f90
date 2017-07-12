@@ -624,7 +624,7 @@ end do
 
 ! set to zero luminosity of grouped cells so they will not be processed in rt_loop (see reduce_grid_res).
 
-call nullify_lum_group_cells 
+!call nullify_lum_group_cells 
 
 ! calculate total luminosity 
 
@@ -718,7 +718,7 @@ subroutine calc_total_luminosity_sca
         
         call mpi_Bcast(lumcell,tot_el, MPI_DOUBLE_PRECISION,0, MPI_COMM_WORLD,ierr)  
 
-        call nullify_lum_group_cells 
+        !call nullify_lum_group_cells 
         
         ! check convergence criteria 
     
@@ -774,212 +774,212 @@ subroutine calc_total_luminosity_sca
 
 end subroutine calc_total_luminosity_sca
 
-!> Assigns the right value of total luminosity and dust density to the parent cells. Needed to use lower resolution grids (see reduce_grid_res() ). Note this subroutine has to be used outside OPENMP RT loops.  
-subroutine assign_parent_dens_arr 
-  integer :: i, j,k, ib,l,cc 
-  integer :: lvl_i, lvl_cc
-  real(kind=real64) :: tot_lum_parent, tot_lum_child, tot_dust_parent, tot_dust_child 
+!!!!!> Assigns the right value of total luminosity and dust density to the parent cells. Needed to use lower resolution grids (see reduce_grid_res() ). Note this subroutine has to be used outside OPENMP RT loops.  
+!!$subroutine assign_parent_dens_arr 
+!!$  integer :: i, j,k, ib,l,cc 
+!!$  integer :: lvl_i, lvl_cc
+!!$  real(kind=real64) :: tot_lum_parent, tot_lum_child, tot_dust_parent, tot_dust_child 
+!!$
+!!$  ! initialize parent cells
+!!$
+!!$  do i = 0, tot_ncell-1 
+!!$
+!!$     if (cchild(i) == -1) cycle 
+!!$
+!!$     dens_stars_arr(:,i) = 0      
+!!$     dens_arr(:,i) = 0      
+!!$
+!!$  end do
+!!$
+!!$  ! Add cchild value to parent cell
+!!$
+!!$  allocate(ccindd(3,max_lvl))
+!!$ 
+!!$  do i = 0, tot_ncell-1
+!!$
+!!$     if (cchild(i) /= -1) cycle
+!!$
+!!$     ccindd = 0
+!!$     lvl_i = lvl(i)
+!!$
+!!$     call cindex_to_ccindd(i,lvl_i,ccindd)
+!!$
+!!$     l=1 
+!!$     ib=1
+!!$     do j=1,max_lvl
+!!$        if (j > 1) ib=2 
+!!$        k=(ccindd(3,j)*base(ib)+ccindd(2,j))*base(ib)+ccindd(1,j)+1
+!!$        l=l+k-1
+!!$  
+!!$        if (lvl(l) == lvl_i-1) then          
+!!$           cc=l
+!!$           lvl_cc = lvl(cc)
+!!$           exit
+!!$        else
+!!$           l=cchild(l)       
+!!$        endif
+!!$     end do
+!!$
+!!$     dens_stars_arr(:,cc) = dens_stars_arr(:,cc) + dens_stars_arr(:,i)*(csize_arr(lvl_i)/csize_arr(lvl_cc))**3
+!!$     dens_arr(:,cc) = dens_arr(:,cc) + dens_arr(:,i)*(csize_arr(lvl_i)/csize_arr(lvl_cc))**3
+!!$     
+!!$  end do
+!!$
+!!$  deallocate(ccindd)
+!!$
+!!$  ! Check parent cells contain same total luminosity as child cells
+!!$  do i = 0, lnum-1
+!!$
+!!$     tot_lum_parent = sum(dens_stars_arr(i,:)*csize(:)**3, mask = cchild /= -1)
+!!$     tot_lum_child = sum(dens_stars_arr(i,:)*csize(:)**3, mask = cchild == -1)
+!!$     if (abs(tot_lum_parent-tot_lum_child)/abs(tot_lum_parent) > 1E-8) then
+!!$        if (main_prc) print *, 'STOP(assign_parent_dens_arr): Luminosity in parent cells do not match that in child cells! Something is wrong...'
+!!$        STOP
+!!$     endif
+!!$
+!!$     tot_dust_parent = sum(dens_arr(i,:)*csize(:)**3, mask = cchild /= -1)
+!!$     tot_dust_child = sum(dens_arr(i,:)*csize(:)**3, mask = cchild == -1)
+!!$     if (abs(tot_dust_parent-tot_dust_child)/abs(tot_dust_parent) > 1E-8) then
+!!$        if (main_prc) print *, 'STOP(assign_parent_dens_arr): Total dust in parent cells do not match that in child cells! Something is wrong...'
+!!$        STOP
+!!$     endif
+!!$
+!!$  end do
+!!$
+!!$end subroutine assign_parent_dens_arr
 
-  ! initialize parent cells
+!!!!!> Groups the smallest cells if their optical depth, at the shortest wavelength, is very small (that is, less than tau_cell_max()). In this case, it assigns a value of -1 to the cchild() element of their parent cell. The original values of cchild() are stored in cchild_or().
+!!!!> \todo This feature is still experimental. 
+!!$subroutine reduce_grid_res
+!!$  
+!!$  integer :: i,count 
+!!$  real(kind=real64) :: tau_cell
+!!$  
+!!$  tot_spare_cells = 0
+!!$
+!!$  if (rt_algorithm_ID /= rta_dust .and. rt_algorithm_ID /= rta_dust2D) return ! grid resolution reduced only for dust RT calculation 
+!!$  
+!!$  if (max_lvl > 3) then
+!!$     
+!!$     if (main_prc) print *, 'reduce grid resolution if possible....'  
+!!$  
+!!$!!! create copy of cchild
+!!$     if (.not.allocated(cchild_or)) then
+!!$        allocate(cchild_or(0:tot_ncell-1))
+!!$        cchild_or=cchild
+!!$     endif
+!!$
+!!$!!! group optically thin cells with lvl = max_lvl -1 
+!!$     count =0 
+!!$     do i=0, tot_ncell -1
+!!$        
+!!$        if ((lvl(i) == max_lvl-1).and.(dens_arr(0,i) > 0.).and.(cchild(i) /= -1)) then   
+!!$           tau_cell=real(dens_arr(0,i)*csize(i)) ! 0 has to be the index of the shortest wavelength. 
+!!$           
+!!$           if (tau_cell < tau_cell_max) then
+!!$              count=count +1
+!!$              cchild(i) = -1             
+!!$           endif
+!!$           
+!!$        endif
+!!$     enddo
+!!$     
+!!$     tot_spare_cells=count*base(2)**3-count
+!!$  
+!!$     if (main_prc) print *, 'number of grouped cells after reducing grid resolution=', tot_spare_cells
+!!$     
+!!$     call print_done
+!!$     
+!!$  endif
+!!$  
+!!$end subroutine reduce_grid_res
 
-  do i = 0, tot_ncell-1 
-
-     if (cchild(i) == -1) cycle 
-
-     dens_stars_arr(:,i) = 0      
-     dens_arr(:,i) = 0      
-
-  end do
-
-  ! Add cchild value to parent cell
-
-  allocate(ccindd(3,max_lvl))
- 
-  do i = 0, tot_ncell-1
-
-     if (cchild(i) /= -1) cycle
-
-     ccindd = 0
-     lvl_i = lvl(i)
-
-     call cindex_to_ccindd(i,lvl_i,ccindd)
-
-     l=1 
-     ib=1
-     do j=1,max_lvl
-        if (j > 1) ib=2 
-        k=(ccindd(3,j)*base(ib)+ccindd(2,j))*base(ib)+ccindd(1,j)+1
-        l=l+k-1
-  
-        if (lvl(l) == lvl_i-1) then          
-           cc=l
-           lvl_cc = lvl(cc)
-           exit
-        else
-           l=cchild(l)       
-        endif
-     end do
-
-     dens_stars_arr(:,cc) = dens_stars_arr(:,cc) + dens_stars_arr(:,i)*(csize_arr(lvl_i)/csize_arr(lvl_cc))**3
-     dens_arr(:,cc) = dens_arr(:,cc) + dens_arr(:,i)*(csize_arr(lvl_i)/csize_arr(lvl_cc))**3
-     
-  end do
-
-  deallocate(ccindd)
-
-  ! Check parent cells contain same total luminosity as child cells
-  do i = 0, lnum-1
-
-     tot_lum_parent = sum(dens_stars_arr(i,:)*csize(:)**3, mask = cchild /= -1)
-     tot_lum_child = sum(dens_stars_arr(i,:)*csize(:)**3, mask = cchild == -1)
-     if (abs(tot_lum_parent-tot_lum_child)/abs(tot_lum_parent) > 1E-8) then
-        if (main_prc) print *, 'STOP(assign_parent_dens_arr): Luminosity in parent cells do not match that in child cells! Something is wrong...'
-        STOP
-     endif
-
-     tot_dust_parent = sum(dens_arr(i,:)*csize(:)**3, mask = cchild /= -1)
-     tot_dust_child = sum(dens_arr(i,:)*csize(:)**3, mask = cchild == -1)
-     if (abs(tot_dust_parent-tot_dust_child)/abs(tot_dust_parent) > 1E-8) then
-        if (main_prc) print *, 'STOP(assign_parent_dens_arr): Total dust in parent cells do not match that in child cells! Something is wrong...'
-        STOP
-     endif
-
-  end do
-
-end subroutine assign_parent_dens_arr
-
-!> Groups the smallest cells if their optical depth, at the shortest wavelength, is very small (that is, less than tau_cell_max()). In this case, it assigns a value of -1 to the cchild() element of their parent cell. The original values of cchild() are stored in cchild_or().
-!> \todo This feature is still experimental. 
-subroutine reduce_grid_res
-  
-  integer :: i,count 
-  real(kind=real64) :: tau_cell
-  
-  tot_spare_cells = 0
-
-  if (rt_algorithm_ID /= rta_dust .and. rt_algorithm_ID /= rta_dust2D) return ! grid resolution reduced only for dust RT calculation 
-  
-  if (max_lvl > 3) then
-     
-     if (main_prc) print *, 'reduce grid resolution if possible....'  
-  
-!!! create copy of cchild
-     if (.not.allocated(cchild_or)) then
-        allocate(cchild_or(0:tot_ncell-1))
-        cchild_or=cchild
-     endif
-
-!!! group optically thin cells with lvl = max_lvl -1 
-     count =0 
-     do i=0, tot_ncell -1
-        
-        if ((lvl(i) == max_lvl-1).and.(dens_arr(0,i) > 0.).and.(cchild(i) /= -1)) then   
-           tau_cell=real(dens_arr(0,i)*csize(i)) ! 0 has to be the index of the shortest wavelength. 
-           
-           if (tau_cell < tau_cell_max) then
-              count=count +1
-              cchild(i) = -1             
-           endif
-           
-        endif
-     enddo
-     
-     tot_spare_cells=count*base(2)**3-count
-  
-     if (main_prc) print *, 'number of grouped cells after reducing grid resolution=', tot_spare_cells
-     
-     call print_done
-     
-  endif
-  
-end subroutine reduce_grid_res
-
-!> Sets to zero the luminosity of grouped cells so they will not be processed in rt_loop (see reduce_grid_res()).
-subroutine nullify_lum_group_cells 
-  integer :: i, j, ic, nls
-
-  if (rt_algorithm_ID /= rta_dust .and. rt_algorithm_ID /= rta_dust2D) return ! grid resolution reduced only for dust RT calculation 
-
-  if (tau_cell_max == 0) return 
-  print *, 'STOP(nullify_lum_group_cells) this is not allowed for the moment'
-  stop
-
-  nls=base(2)**3
-  
-  do i=0, tot_ncell-1
-
-     if (cchild(i) == -1 .and. cchild_or(i) /= -1) then
-        
-        do j=0, nls-1
-
-           ic=cchild_or(i)+j
-           
-           lumcell(:,ic) = 0 
-
-        end do
-
-     endif
-
-  end do
-
-end subroutine nullify_lum_group_cells
+!!!!!> Sets to zero the luminosity of grouped cells so they will not be processed in rt_loop (see reduce_grid_res()).
+!!$subroutine nullify_lum_group_cells 
+!!$  integer :: i, j, ic, nls
+!!$
+!!$  if (rt_algorithm_ID /= rta_dust .and. rt_algorithm_ID /= rta_dust2D) return ! grid resolution reduced only for dust RT calculation 
+!!$
+!!$  if (tau_cell_max == 0) return 
+!!$  print *, 'STOP(nullify_lum_group_cells) this is not allowed for the moment'
+!!$  stop
+!!$
+!!$  nls=base(2)**3
+!!$  
+!!$  do i=0, tot_ncell-1
+!!$
+!!$     if (cchild(i) == -1 .and. cchild_or(i) /= -1) then
+!!$        
+!!$        do j=0, nls-1
+!!$
+!!$           ic=cchild_or(i)+j
+!!$           
+!!$           lumcell(:,ic) = 0 
+!!$
+!!$        end do
+!!$
+!!$     endif
+!!$
+!!$  end do
+!!$
+!!$end subroutine nullify_lum_group_cells
 
 
- !> Restores the original grid resolution (if needed).
-subroutine restore_grid_original_res
-
-  integer :: i, j, ic, nls
-  integer :: il 
-  logical :: allocated_scaspe, allocated_scaspe_tot 
-
-  if (rt_algorithm_ID /= rta_dust .and. rt_algorithm_ID /= rta_dust2D) return ! grid resolution reduced only for dust RT calculation 
-  
-  if (max_lvl > 3) then 
-  
-     if (main_prc) print *, 'restoring original grid resolution if needed'
-  
-     nls=base(2)**3
-     
-     allocated_scaspe = allocated(scaspe_arr)
-     allocated_scaspe_tot = allocated(scaspe_tot_arr)
-  
-     do i=0, tot_ncell -1
-
-        if ((lvl(i) == max_lvl -1).and.(dens_arr(0,i) > 0.).and.(cchild(i) == -1).and.(cchild_or(i) /= -1)) then
-        
-           do j=0, nls-1
-           
-              ic=cchild_or(i)+j
-              
-              u_final_arr(:,ic)=u_final_arr(:,i)
-              u_fest_arr(:,ic)=u_fest_arr(:,i)
-
-              
-              if (allocated_scaspe) then
-                 do il = 0, lnum_node-1 
-                    scaspe_arr(il)%a(:,ic)=scaspe_arr(il)%a(:,i)/nls
-                 enddo
-              endif
-
-              if (allocated_scaspe_tot) then
-                 do il = 0, lnum_node-1 
-                    scaspe_tot_arr(il)%a(:,ic)=scaspe_tot_arr(il)%a(:,i)/nls
-                 enddo
-              endif
-              
-           end do
-           
-           cchild(i)=cchild_or(i)
-               
-        endif
-  
-     enddo
-
-     call print_done
-  
-  endif
-
-end subroutine restore_grid_original_res
+!!! !> Restores the original grid resolution (if needed).
+!!$subroutine restore_grid_original_res
+!!$
+!!$  integer :: i, j, ic, nls
+!!$  integer :: il 
+!!$  logical :: allocated_scaspe, allocated_scaspe_tot 
+!!$
+!!$  if (rt_algorithm_ID /= rta_dust .and. rt_algorithm_ID /= rta_dust2D) return ! grid resolution reduced only for dust RT calculation 
+!!$  
+!!$  if (max_lvl > 3) then 
+!!$  
+!!$     if (main_prc) print *, 'restoring original grid resolution if needed'
+!!$  
+!!$     nls=base(2)**3
+!!$     
+!!$     allocated_scaspe = allocated(scaspe_arr)
+!!$     allocated_scaspe_tot = allocated(scaspe_tot_arr)
+!!$  
+!!$     do i=0, tot_ncell -1
+!!$
+!!$        if ((lvl(i) == max_lvl -1).and.(dens_arr(0,i) > 0.).and.(cchild(i) == -1).and.(cchild_or(i) /= -1)) then
+!!$        
+!!$           do j=0, nls-1
+!!$           
+!!$              ic=cchild_or(i)+j
+!!$              
+!!$              u_final_arr(:,ic)=u_final_arr(:,i)
+!!$              u_fest_arr(:,ic)=u_fest_arr(:,i)
+!!$
+!!$              
+!!$              if (allocated_scaspe) then
+!!$                 do il = 0, lnum_node-1 
+!!$                    scaspe_arr(il)%a(:,ic)=scaspe_arr(il)%a(:,i)/nls
+!!$                 enddo
+!!$              endif
+!!$
+!!$              if (allocated_scaspe_tot) then
+!!$                 do il = 0, lnum_node-1 
+!!$                    scaspe_tot_arr(il)%a(:,ic)=scaspe_tot_arr(il)%a(:,i)/nls
+!!$                 enddo
+!!$              endif
+!!$              
+!!$           end do
+!!$           
+!!$           cchild(i)=cchild_or(i)
+!!$               
+!!$        endif
+!!$  
+!!$     enddo
+!!$
+!!$     call print_done
+!!$  
+!!$  endif
+!!$
+!!$end subroutine restore_grid_original_res
  
   !> This is the main RT loop over the sources of radiation. It is used in all calculation phases where the radiation field is derived.
 !> \todo find out how to remove unused variables in fortran programs
