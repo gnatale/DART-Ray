@@ -1,0 +1,12 @@
+*.mod
+*.o
+RUNS/
+create_adap_grid_Nbody_SPH
+create_adap_grid_galaxy
+create_adap_grid_magtar
+create_adap_grid_trustI
+dartray_Nbody_SPH
+dartray_galaxy
+dartray_magtar
+dartray_trustI
+*.h5

@@ -540,9 +540,8 @@ CONTAINS
        enddo
        close(id)
 
-     !  if (rt_algorithm_ID /= rta_i_obs .and. rt_algorithm_ID /= rta_i_obs_dust) then 
-       if (rt_algorithm_ID /= rta_i_obs) then ! this has to be changed if you will include scattered dust emission light in the i_obs_dust algorithm 
-
+       if (rt_algorithm_ID /= rta_i_obs .and. rt_algorithm_ID /= rta_i_obs_dust) then 
+      
           tot_ndir_scaspe=tot_ndir
           
        else 
@@ -2513,7 +2512,7 @@ subroutine print_lambda_grid
  
 ! Open an existing dataset.
      !
-     CALL h5dopen_f(file_id, dsetname(i), dset_id, error)  
+    ! CALL h5dopen_f(file_id, dsetname(i), dset_id, error)  
    ! note the input arrays might actually be bigger than dims when created with the standard create_adap_program
   
   if (dsetname(i) == 'dens' ) then
@@ -3178,6 +3177,7 @@ subroutine check_input
   
   if (only_direct_rt) then 
      if (main_prc) print *, 'WARNING: only_direct_rt = .TRUE. Only direct light will be processed (no scattered light iterations)'
+     print_output_part2 = .TRUE. ! by default output part2 is printed if only direct light is processed. 
   endif
 
   if (test_run) then 

@@ -173,6 +173,11 @@ CONTAINS
     grid_creation_lambda = .TRUE. 
 
     !print *, 'calculating grid for lambda =', lambda 
+    ! initialize arrays 
+    dens = 0            
+    dens_disk = 0
+    dens_tdisk = 0
+    dens_bulge = 0
 
     call OMP_SET_NESTED(.true.)
     call omp_set_num_threads(nproc)
@@ -202,7 +207,7 @@ CONTAINS
 !!$       endif 
 
      
-       dens(i)=av_rho_dust              
+       dens(i)=av_rho_dust                
        !dens_stars(tot_ncell)=av_rho_stars
        dens_disk(i) = av_rho_disk
        dens_tdisk(i) = av_rho_tdisk
@@ -234,13 +239,14 @@ end subroutine make_lambda_grid
 
   disk_comp1='dust_disk'
   disk_comp2='dust_tdisk'
+
   av_rho_dust_disk=av_disk(x,y,z,cellsize,disk_comp1,thick_disk_type_ID)*truncate  
   av_rho_dust_tdisk=av_disk(x,y,z,cellsize,disk_comp2,thin_disk_type_ID)*truncate1
   av_rho_dust=av_rho_dust_disk+av_rho_dust_tdisk
-
+  
   disk_comp1='disk'
   disk_comp2='tdisk'
-  
+
   av_rho_disk=av_disk(x,y,z,cellsize,disk_comp1,old_disk_type_ID)*truncate
   av_rho_tdisk=av_disk(x,y,z,cellsize,disk_comp2,young_disk_type_ID)*truncate1
   av_rho_bulge= av_star_bulge(x,y,z,cellsize)*truncate

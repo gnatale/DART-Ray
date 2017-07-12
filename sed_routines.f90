@@ -2407,6 +2407,11 @@ end do
 
 deallocate(E_arr_sub, pt_sub, cc1, cc2, delta_E_arr_sub, rd_interpol)
  
+if (count(pt /= pt) > 0) then ! if there are NANs set to zero. This can happen for few grains in some weird cases. To investigate origin. For now, just set to zero. 
+   print *, 'WARNING: NAN in PT dust. Set to 0!'
+   pt = 0
+endif
+
 !imax_arr = maxloc(pt)-1 
 !print *, 'max T= ', t_arr(imax_arr(0))
 !read(*,*)

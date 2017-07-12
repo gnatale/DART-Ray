@@ -750,7 +750,7 @@ end subroutine interpolate_kext
 
 
 
-real function av_disk(x,y,z,cellsize,disk_comp,disk_type_ID)
+real(kind=real64) function av_disk(x,y,z,cellsize,disk_comp,disk_type_ID)
 IMPLICIT NONE
 real(Kind=real64) :: x,y,z,cellsize,dx,tot_sum,sum_temp,xi,yj,zk,rad
 real(Kind=real64) :: x0,y0,z0,xexp,ds,rterm,zterm,zterm1,zc1,const, zc_flat_grad, norm_rad
@@ -1063,7 +1063,7 @@ av_disk=a*tot_sum/cellsize**3
 end function av_disk
 
 
-real function av_star_bulge(x,y,z,cellsize)
+real(kind=real64) function av_star_bulge(x,y,z,cellsize)
 real(Kind=real64) :: x,y,z,cellsize,a,br,bz,dx,x0,y0,z0,ds,f_exp,sum1,xi,yj,zk,sum2,z1,rad,bsersic,ellipt2,n,acap,m,sum_temp !m is the small r in Richard's formula
 integer :: steps,i,j,k,nt  
 real(Kind=real64) :: cos_theta_bulge, sin_theta_bulge, xi_rot, yj_rot
