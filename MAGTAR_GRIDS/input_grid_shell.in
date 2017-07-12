@@ -1,0 +1,29 @@
+&magtar_input_strings
+grid_file='grid_shell.h5'
+grid_info_file='grid_shell_info.dat'
+dir_grid='./MAGTAR_GRIDS/'
+dust_geometry = 'shell'
+file_lambda_list = 'lambda_list_trustI_basic.dat',
+units_lambda = 'um',
+dust_model = 'TRUST',
+file_av_opacities = './DUST_OPACITY/TRUST/ZDA_BARE_GR_S_Effective.dat'
+subdivision_criteria = 'shell'
+/
+&magtar_input_var
+modelsize =10
+tau_z=4.8E-1
+lambda_ref=1.
+base=10,3
+ax=1.09
+by=2.18
+cz=2.18
+elrad_width=0.10 
+max_ncell=1.5E6    ! max number of cells 
+max_lvl=3
+min_lvl=1.
+max_dtau=4.8E-2
+max_dlum=0.
+/
+&magtar_input_logical
+input_av_opacities = .TRUE.,
+/ 

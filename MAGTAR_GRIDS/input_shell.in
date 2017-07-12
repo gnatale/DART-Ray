@@ -1,0 +1,49 @@
+&dartray_input_strings
+label_model_out = 'shell'
+grid_file='grid_shell.h5',
+file_dir_out='dir_out_trustI.dat',  
+file_p_src='pos_point_sources.dat', 
+file_lambda_list='lambda_list_trustI_basic.dat', 
+dir_runs='./RUNS/SHELL',
+rt_algorithm = 'main',
+dir_grid='./MAGTAR_GRIDS/',
+units_lambda = 'um',
+dust_model = 'TRUST',
+file_av_opacities = './DUST_OPACITY/TRUST/ZDA_BARE_GR_S_Effective.dat',
+units_csize = 'pc',
+units_luminosity = 'erg/s/Hz',
+dust_heating_type = 'eff'
+file_param_src = 'param_point_sources.dat'
+param_to_project = 'optical_depth'
+/
+&dartray_input_var
+lambda_ref = 1., 
+kp_sca_max=1,
+rad_lim=0.1,
+accuracy=0.1, 
+conv_en_lim=0.01, 
+bm_par = 10, 
+bm_par_sca= 5, 
+bm_par_max=200,  
+max_lambda_stars = 30,
+min_lambda_dust = 1.,
+dist_obs = 10E3,
+npixel_maps = 300.,
+map_size_factor = 1.
+ind_out_maps =  2, 8, 28, 35
+/
+&dartray_input_logical
+use_dir_out = .TRUE.,
+use_p_src = .TRUE.,
+print_scaspe_part2 = .FALSE.,
+print_output_part2 = .FALSE.,
+print_maps = .TRUE.,
+print_sed = .TRUE.,
+restore_file_mpi = .TRUE.,
+input_av_opacities = .TRUE.,
+sequential_scattering = .FALSE.,
+no_communications = .TRUE.,
+no_dust_rt = .FALSE.,
+only_direct_rt = .FALSE.
+test_run = .FALSE.
+/
