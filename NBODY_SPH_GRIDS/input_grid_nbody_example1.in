@@ -1,0 +1,28 @@
+&nbody_sph_input_strings
+label_model_lambda_grid='run708mainDiff.01000_unbar_LD',
+grid_file='grid_run708mainDiff.01000_unbar_LD_main.h5', 
+grid_info_file='grid_run708mainDiff.01000_unbar_LD_info.dat',
+file_nbody_sph = 'run708mainDiff.01000_unbar.h5',
+dir_grid='./NBODY_SPH_GRIDS/EX1',
+file_lambda_list = 'lambda_list_trustI_basic.dat',
+units_lambda = 'um',
+dust_model = 'TRUST',
+file_av_opacities = './DUST_OPACITY/TRUST/ZDA_BARE_GR_S_Effective.dat'
+stellar_library = 'starburst99'
+subdivision_criteria = 'standard' 
+/
+&nbody_sph_input_var
+modelsize = 20000
+lambda_ref= 0.43287613  
+lambda_min = 0.09
+lambda_max = 30. 
+base=3,3,
+max_ncell=4.E6     
+max_lvl=4
+min_lvl=1.
+max_dtau= 0.01
+max_dlum=0.10E-4
+/
+&nbody_sph_input_logical
+input_av_opacities = .TRUE.,
+/

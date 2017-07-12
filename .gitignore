@@ -10,3 +10,7 @@ dartray_galaxy
 dartray_magtar
 dartray_trustI
 *.h5
+NBODY_SPH_GRIDS/run708mainDiff.01000
+NBODY_SPH_GRIDS/run708mainDiff.01000.FeMassFrac
+NBODY_SPH_GRIDS/run708mainDiff.01000.OxMassFrac
+NBODY_SPH_GRIDS/run708mainDiff.param
