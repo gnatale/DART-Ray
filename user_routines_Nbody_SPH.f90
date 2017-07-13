@@ -647,7 +647,6 @@ endif
 
 end subroutine av_galaxy
 
-!> \todo Is this still needed ? 
 !!$subroutine set_Nbody_SPH
 !!$  ! This routines sets the opacity coefficients 
 !!$  
