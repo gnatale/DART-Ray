@@ -648,16 +648,16 @@ endif
 end subroutine av_galaxy
 
 !> \todo Is this still needed ? 
-subroutine set_Nbody_SPH
-  ! This routines sets the opacity coefficients 
-  
-!  call read_opacity_table_trustI  WHAT ABOUT THIS 
-  
-  kabs=kabs/kext  !!! normalization : the dens array values in the grid already contain extinction coefficient 
-  ksca=ksca/kext
-  kext=1.
-  
-end subroutine set_Nbody_SPH
+!!$subroutine set_Nbody_SPH
+!!$  ! This routines sets the opacity coefficients 
+!!$  
+!!$!  call read_opacity_table_trustI  WHAT ABOUT THIS 
+!!$  
+!!$  kabs=kabs/kext  !!! normalization : the dens array values in the grid already contain extinction coefficient 
+!!$  ksca=ksca/kext
+!!$  kext=1.
+!!$  
+!!$end subroutine set_Nbody_SPH
 
 !> Prints the pcell_star() and pcell_gas() arrays in an output file (file_pcell() ).  
 subroutine print_pcell

@@ -207,7 +207,6 @@ subroutine dartray_main_2D
  end subroutine dartray_sed
 
  !> Dartray procedure for the dust emission RT calculation.
- !> \todo Add isotropic scattering option and change scaspe arrays accordingly. You might consider making a data structure with two types of scaspe arrays, one depending on direction and one not. THIS IS FOR NEXT VERSION
  subroutine dartray_dust
 
    ! return if no_dust_rt is set
@@ -545,8 +544,7 @@ subroutine grid_initialize_dust
  end subroutine grid_initialize_dust
 
 !> Calls the subroutines to print the output files for the dust RT algorithms.
- !> \todo DONE set right units for u_final_arr output files (always J/m/pc^3).
- !> \todo add SED for internal observer to calc_sed
+!> \todo add calculation SED for internal observer to calc_sed
 subroutine make_output_dust
 
   ! part 2 (direct light)

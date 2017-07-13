@@ -46,7 +46,6 @@ namelist /magtar_input_logical/ input_av_opacities
 CONTAINS
 
 !> Reads input file for the grid creation for the magtar models.
-!> \todo check if input_av_opacities is really needed here. 
 subroutine read_input_magtar
 
 integer :: ioun

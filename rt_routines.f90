@@ -982,7 +982,6 @@ end subroutine calc_total_luminosity_sca
 !!$end subroutine restore_grid_original_res
  
   !> This is the main RT loop over the sources of radiation. It is used in all calculation phases where the radiation field is derived.
-!> \todo find out how to remove unused variables in fortran programs
  subroutine rt_loop
    
    integer :: i, im,src_id, sid
@@ -2070,7 +2069,6 @@ end subroutine find_cc_new2
 !> @param [in] rel_vec Vector from cell centre to considered point
 !> @param [in] cellsize Size of the cell
 !> @param [out] outcube Vector whose element are equal to 1 if the projection of rel_vec on the corresponding axis is larger than cellsize
-!> \todo Use precision parameter here instead of 1E-7
  subroutine calc_outcube(rel_vec,cellsize,outcube)
    real(kind=real64) :: rel_vec(3), cellsize
    integer :: outcube(3),i
@@ -3604,9 +3602,6 @@ end subroutine check_2d_src
 
 
 !> Takes care of symmetrising the radiation fields and scaspe() arrays at the end of the RT loops in the RT 2D mode. R and z symmetry is exploited here. 
-!> \todo MAYBE LATER the fix_symmetry subroutines can be organized better (are three
-!of them really needed ? )
-!> \todo DONE_TO_TEST take care of lum_lost here 
 subroutine fix_symmetry
   integer :: ierr
 
@@ -4029,8 +4024,7 @@ end subroutine fix_symmetry_part1
 
  end subroutine fix_symmetry_part3
 
-!> Assigns zero to all negative elements of an array. Used in fix_symmetry_part3() to remove negative due to numerical accuracy.
-!> \todo MPI_OPENMP Remember that this could give problems in case you want to work with negative intensities (e.g. when dust self-heating is included). 
+!> Assigns zero to all negative elements of an array. Used in fix_symmetry_part3() to remove negative due to numerical accuracy. Remember that this could give problems in case you want to work with negative intensities.  
  subroutine remove_negative(array)
    real(kind=real64) :: array(0:)
 
@@ -4052,7 +4046,6 @@ end subroutine fix_symmetry_part1
 
 
 !> Allocates and initialises a new scaspe array ( scaspe_prev_arr()) which is used while symmetrising the scaspe_arr() array in the RT 2D mode or in the sequential scattering algorithm (see sequential_scattering()).
-!> \todo Maybe this can be avoided by setting the scaspe of the symmetric cells to zero at the beginning of each scattering iteration. You save quite a lot of memory in this way. NEW: Cannot be done for base = 3 but maybe for base = 2 
 subroutine create_scaspe_prev
   integer :: i,k 
   integer :: i0, i1
@@ -4407,7 +4400,6 @@ end subroutine sort_en_sca_list
 
 
 !> Processes en_sca_list_received within each MPI process. This is done by all threads bu the master thread.  
-!> \todo MPI_OPENMP remove probably useless if statement and check results are correct 
 subroutine process_en_sca_received(im)
   integer :: i,k,im, ip
   integer :: i0, i1, n_el_in

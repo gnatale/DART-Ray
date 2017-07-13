@@ -81,14 +81,11 @@ MODULE sed_routines
   real(kind=real64), allocatable :: count_spectra_uv_opt(:,:)
   
 
-  !> \todo why is iso_fortran_env needed here ? 
-
   !$OMP THREADPRIVATE(abs_int_rad_stars,abs_int_rad_dust, large_grain_energy, Emin, Emax, Tmin, Tmax, E_arr, T_arr, Pt, Tmin_prev, Tmax_prev, delta_E_arr_bin,  Qp_arr, Rd_integrated,aa, bb, Re0, Re1, Re2, rd_arr, Edot_arr,tot_dust_em, dust_em_arr_fa) 
  
 CONTAINS
 
-  !> Calculates stellar or dust emission SED from the i_obs() arrays. If keyword print_sed is not set TRUE, then it just returns.
-  !> \todo DONE_TO_TEST This is not going to work in the no_communication mode.... Fix this. NEW: Done. See if it works.  
+  !> Calculates stellar or dust emission SED from the i_obs() arrays. If keyword print_sed is not set TRUE, then it just returns. 
   subroutine calc_sed
     integer :: i, k, i0, i1
     real(kind=real64), allocatable :: out_sed_arr(:,:), in_sed_arr(:,:)
@@ -278,7 +275,6 @@ CONTAINS
   end subroutine set_dust_emission
 
   !> Compare the newly calculated dens_stars_arr() with dens_stars_arr_prev(). If the relative difference is smaller than conv_en_lim(), it assigns TRUE to cnflag_dust(), thus stopping the dust heating iterations. It not, it subtracts from dens_stars_arr() the luminosity already processed in the previous dust heating iterations and it updates dens_stars_arr_prev(). 
-!> \todo maybe you should add remove_negative here when subtracting. 
   subroutine check_dens_stars_arr
     real(kind=real64), allocatable :: temp_dens_stars_arr(:,:)
     integer :: n_no_conv_el ! number of no convergence elements in dens_stars_arr 
@@ -846,7 +842,6 @@ CONTAINS
 
 
 !> Calculates the equilibrium dust temperature given the absorption Q coefficient, the radiation field intensity of the stellar emission and of the dust emission in [W/m/m^2]. The input qabs_arr coefficient can also have units [e.g. m^2], as for the effective grain emission calculation, without changing the output equilibrium temperature. The output absorbed energy abs_en is in units of W/m^2 times the units of the input qabs_arr.  
-!> \todo remove dust_size here, not needed ! 
 subroutine calc_t_dust_equil(qabs_arr, dust_size, rf_stars, rf_dust, t_dust, abs_en)
 real(kind=real64) :: qabs_arr(0:), rf_stars(0:), rf_dust(0:), t_dust, dust_size
 !real(kind=real64) :: abs_int_rad_stars(0:lnum_stars-1) ! absorbed stellar emission energy / wavelength
@@ -905,7 +900,6 @@ end subroutine calc_rd_arr
 
 
   !> Sets the units of dens_stars_arr() in the dust RT algorithms. These units are W/m/pc^3 where meters refers to the wavelength.
-  !> \todo DONE Maybe should output u_final_arr and i_obs_arr in the same units for stellar and dust emission. Units of i_obs_arr for dust emission always in W/m/pc^2/sr.
   subroutine set_units_dens_stars_arr
 
     ! set right units
@@ -1119,8 +1113,6 @@ end subroutine prepare_dust_model
 
 
 !> Loads the Qabs, Qsca, Qext and gsca factors from the tables in the dust opacity directory (from the TRUST benchmark project) and interpolate them to the input wavelength grid. Note that a further interpolation is needed to match the grain sizes to the values of the input tables. This is done in interpolate_q_grain_fa().
-!> \todo Insert acknowledgements for using the opacity tables from TRUST and those from Draine and Li 2006. Where are the TRUST tables from ? Insert reference in output message when checking dust_model and dust_opacity_tables. 
-
 subroutine load_opacity_param
 
   character(LEN=lcar) :: file_comp_arr(0:max_n_dust_comp-1)  
@@ -1350,7 +1342,6 @@ subroutine load_opacity_param
 end subroutine load_opacity_param
 
 !>  Loads the grain size distribution from the standard TRUST tables or from user provided files.
-!> \todo How to check for blank spaces at the end of ASCII files ? This is valid for all of them e.g. file_dir_out 
 subroutine load_fa_arr
 
   character(LEN=lcar) :: file_comp_arr(0:max_n_dust_comp-1)
@@ -1731,7 +1722,6 @@ end subroutine value_locate
 
 
 !> Interpolates linearly at a position x within the bin [x0,x1] given the boundary values y0=f(x0) and y1=f(x1). y0 and y1 are defined as arrays, so the subroutine can be used for multiple values provided that the x coordinates x0, x1 and x are the same.   
-!> \todo You decided to use this routine only for single pairs of numbers, not arrays. You can remove the (0:) here as well as in the variables given in the input call. 
 subroutine lin_interpolate(y0,y1,x0,x1,x,y)
 
   real(kind=real64) :: x0,x1,x, y0(0:),y1(0:), y(0:) 
@@ -1766,8 +1756,7 @@ end subroutine lin_interpolate
 
 
 
-!> Calculates integrated opacity coefficients kabs_arr(), ksca_arr(), kext_arr() and scattering phase function parameter gsca_arr() from the tabulated opacity parameters and the input grain size distributions. The resulting values for the integrated coefficients depends slightly on the specific interpolation scheme. For this reason, we add the option to upload these values from an input file as well using the keyword load_av_opacities() and file_int_opacities(). In this case, the code checks that the values obtained by this routine and those uploaded through the input file file_av_opacities() do not vary more than 5%. This is necessary to guarantee consistency between the dust emission and the stellar emission calculations within a few percents. 
-!> \todo DONE_TO_TEST about lambda_ref when lambda_grids are used... make it such that lambda_ref has to coincide with one of the wavelengths of the lambda grid and scale dust density from there. this would allow the use of the same main grid for different models.    
+!> Calculates integrated opacity coefficients kabs_arr(), ksca_arr(), kext_arr() and scattering phase function parameter gsca_arr() from the tabulated opacity parameters and the input grain size distributions. The resulting values for the integrated coefficients depends slightly on the specific interpolation scheme. For this reason, we add the option to upload these values from an input file as well using the keyword load_av_opacities() and file_int_opacities(). In this case, the code checks that the values obtained by this routine and those uploaded through the input file file_av_opacities() do not vary more than 5%. This is necessary to guarantee consistency between the dust emission and the stellar emission calculations within a few percents.    
 subroutine calc_total_opacity
   integer :: i, ic, ig 
   integer :: imax
@@ -2009,36 +1998,35 @@ end subroutine read_av_opacities
 
 
 
-!> Sets lambda_arr_SI_HD_dust() values
-!> \todo Should I really use this routine. More interpolations needed.... 
-subroutine set_lambda_arr_SI_HD_dust 
-  integer, parameter :: num = 100 ! number of wavelengths 
-  real(kind=real64) :: l0, l1 ! minimum and maximum wavelength [m]
-  real(kind=real64) :: step_size
-  integer :: i 
-  
-  allocate(lambda_arr_SI_HD_dust(0:num-1), lambda_arr_SI_HD_dust_bin(0:num-2), delta_lambda_bin_HD_dust(0:num-1)) ! all in [m]
-
-  l0 = 1E-6  ! 1 um 
-  l1 = 1000E-6  ! 1000 um 
-
-  step_size = (log10(l1)-log10(l0))/(num-1)
-
-  do i = 0, num-1 
-
-    lambda_arr_SI_HD_dust(i) = 10._real64**(i*step_size + log10(l0))
-    
-  end do
-
-  lambda_arr_SI_HD_dust_bin=10_real64**((log10(lambda_arr_SI_HD_dust(1:num-1))+log10(lambda_arr_SI_HD_dust(0:num-2)))/2.)
-  
-  delta_lambda_bin_HD_dust(1:num-2) = lambda_arr_SI_HD_dust_bin(1:num-2)-lambda_arr_SI_HD_dust_bin(0:num-3)
-  delta_lambda_bin_HD_dust(0)=lambda_arr_SI_HD_dust_bin(0)-lambda_arr_SI_HD_dust(0)
-  delta_lambda_bin_HD_dust(num-1)=lambda_arr_SI_HD_dust(num-1)-lambda_arr_SI_HD_dust_bin(num-2)
-
-  deallocate(lambda_arr_SI_HD_dust_bin) ! this array is not needed anymore 
-
-end subroutine set_lambda_arr_SI_HD_dust
+!!!!> Sets lambda_arr_SI_HD_dust() values
+!!$subroutine set_lambda_arr_SI_HD_dust 
+!!$  integer, parameter :: num = 100 ! number of wavelengths 
+!!$  real(kind=real64) :: l0, l1 ! minimum and maximum wavelength [m]
+!!$  real(kind=real64) :: step_size
+!!$  integer :: i 
+!!$  
+!!$  allocate(lambda_arr_SI_HD_dust(0:num-1), lambda_arr_SI_HD_dust_bin(0:num-2), delta_lambda_bin_HD_dust(0:num-1)) ! all in [m]
+!!$
+!!$  l0 = 1E-6  ! 1 um 
+!!$  l1 = 1000E-6  ! 1000 um 
+!!$
+!!$  step_size = (log10(l1)-log10(l0))/(num-1)
+!!$
+!!$  do i = 0, num-1 
+!!$
+!!$    lambda_arr_SI_HD_dust(i) = 10._real64**(i*step_size + log10(l0))
+!!$    
+!!$  end do
+!!$
+!!$  lambda_arr_SI_HD_dust_bin=10_real64**((log10(lambda_arr_SI_HD_dust(1:num-1))+log10(lambda_arr_SI_HD_dust(0:num-2)))/2.)
+!!$  
+!!$  delta_lambda_bin_HD_dust(1:num-2) = lambda_arr_SI_HD_dust_bin(1:num-2)-lambda_arr_SI_HD_dust_bin(0:num-3)
+!!$  delta_lambda_bin_HD_dust(0)=lambda_arr_SI_HD_dust_bin(0)-lambda_arr_SI_HD_dust(0)
+!!$  delta_lambda_bin_HD_dust(num-1)=lambda_arr_SI_HD_dust(num-1)-lambda_arr_SI_HD_dust_bin(num-2)
+!!$
+!!$  deallocate(lambda_arr_SI_HD_dust_bin) ! this array is not needed anymore 
+!!$
+!!$end subroutine set_lambda_arr_SI_HD_dust
 
 !> Calculates planck averaged Qabs for the grains in the input grain size distributions and for a set of temperatures.
 subroutine  calc_planck_av_qabs
@@ -2438,7 +2426,6 @@ end do
 end subroutine make_log_array
 
 !> Makes array of bin sizes that can be used for integration. 
-!> \todo add check that the array is in ascending order ? 
 subroutine make_delta_array(xarr, delta_xarr_bin)
   real(kind=real64) :: xarr(0:), delta_xarr_bin(0:)
   integer :: num 
@@ -2738,7 +2725,6 @@ end do
 end subroutine make_linear_array
 
 !> Converts temperature array into grain enthalpy array (reverse of convert_E_arr_to_T_arr).
-!> \todo maybe insert minimum temperature achievable (something like in IDL code for the case when small grains reach very low temperatures) 
 subroutine convert_T_arr_to_E_arr(T_arr, E_arr, ic,ig) 
 integer :: i, num , ic, ig 
 real(kind=real64) :: E_arr(0:), T_arr(0:), vol, tc_min

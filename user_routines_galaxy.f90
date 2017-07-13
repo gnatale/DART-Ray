@@ -301,7 +301,6 @@ namelist /galaxy_input_logical/ input_av_opacities
 CONTAINS
 
 !> Reads input file for the grid creation for the galaxy 2D model. 
-!> \todo add chi_par input to info file 
 subroutine read_input_galaxy
 integer :: ioun, i, id  
 character(len=lcar) :: input_filename

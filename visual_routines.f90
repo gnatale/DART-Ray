@@ -566,7 +566,6 @@ end subroutine calc_ray_inters
 
 
 !> Projects the 3D grid cells onto the observer map. The calculated maps are only those corresponding to the wavelengths stored in the local i_obs_arr() array. 
-!> \todo make notation for Y axis on observer plane consistent
 subroutine map_projection(idir, obs_vec, xi_dir, yi_dir)
   integer :: i, idir, ihost
   real(kind=real64) :: obs_vec(0:2), xi_dir(0:2), yi_dir(0:2), r(0:2), ri(0:2)

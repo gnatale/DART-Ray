@@ -1165,7 +1165,6 @@ subroutine print_big_array(filename,dsetname,dims,rank)
 end subroutine print_big_array
 
 !> Adds extra info to printed big array. This works only for one dimensional arrays.   
-!> \todo is the H5T_NATIVE_DOUBLE in the line h5dcreate_f correct ? 
 subroutine add_info_big_array(filename,dsetname_add, dims_add, rank_add)
 
   INTEGER(HID_T) :: file_id                            ! File identifier
@@ -1190,10 +1189,13 @@ subroutine add_info_big_array(filename,dsetname_add, dims_add, rank_add)
      rank_in = rank_add(i)
      CALL h5screate_simple_f(rank_in, dims_in, dspace_id, error)
      
-     CALL h5dcreate_f(file_id, dsetname_add(i),H5T_NATIVE_DOUBLE , dspace_id, &
-          dset_id, error)  
-     
-    ! CALL h5dopen_f(file_id, dsetname_add(i), dset_id, error)  
+     if (dsetname_add(i) /= 'nside_sca') then  
+        CALL h5dcreate_f(file_id, dsetname_add(i),H5T_NATIVE_DOUBLE , dspace_id, &
+          dset_id, error)   
+     else 
+        CALL h5dcreate_f(file_id, dsetname_add(i),H5T_NATIVE_INTEGER , dspace_id, &
+          dset_id, error) 
+    endif
         
      if (dsetname_add(i) == 'nside_sca' ) then
         CALL h5dwrite_f(dset_id,H5T_NATIVE_INTEGER , nside_sca, dims_in, error)  
@@ -1661,7 +1663,6 @@ end subroutine print_sed_arr
 
 
 !> Writes map_arr_out() on file_maps() and file_maps_part2().
-!> \todo check why lambda_arr is not added in the projection algorithm 
 subroutine print_map_arr_out(filename)
   integer :: i,j,k
   INTEGER     ::   rank 
@@ -3519,7 +3520,6 @@ subroutine set_chunk_size
 end subroutine set_chunk_size
 
 !> Checks that the RAM memory of the machine is sufficient to host the big scaspe() arrays required in DART-Ray. WARNING: It assumes that all MPI processes run on different cluster nodes.  
-!> \todo MPI_OPENMP find out why sometimes there is rm error. Is it still doing it ?  
 subroutine check_memory
 
 !> @param file_tmp Temporary file to store output linux commands
@@ -3817,7 +3817,6 @@ end do
 end subroutine reduce_scaspe_arr
 
 !> Reduces lum_lost() stored in all MPI processes.
-!> \todo DONE_TO_TEST what happens here for dust RT and iterations_dustem > 1 ? 
 subroutine reduce_lum_lost 
 integer :: ierr
 real(kind=real64), allocatable :: in_arr_1d(:)
@@ -3840,7 +3839,6 @@ end subroutine reduce_lum_lost
 
 
 !> Reduces psel_av_arr() stored in all MPI processes.
-!> \todo DONE_TO_TEST is this working in dust RT ? probably not. Decide how to do it... 
 subroutine reduce_psel_av_arr 
 integer :: ierr
 real(kind=real64), allocatable :: in_arr(:,:,:)
