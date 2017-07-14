@@ -1,3 +1,4 @@
+!> Contains the subroutines to specify the stellar emission and dust density distribution for the TRUST I slab benchmark. 
 MODULE user_routines_trustI
 use smooth_grid_routines
 use iso_fortran_env

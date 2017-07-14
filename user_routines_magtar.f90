@@ -1,3 +1,4 @@
+!>  Contains the subroutines to specify the stellar emission and dust density distribution for the dust geometries as in Natale et al.(2017, ApJ, 837, 9). These include shell, cavity and wind geometries. 
 MODULE user_routines_magtar
 use smooth_grid_routines
 use iso_fortran_env

@@ -1,3 +1,4 @@
+!> Contains all the subroutines to calculate the stellar and dust emission SEDs.  
 MODULE sed_routines
   use smooth_grid_routines
   use io_routines
@@ -2359,6 +2360,11 @@ do ! iterate on temperature range if necessary
                   
       ! integrate to calculate Fe1 and add contribution to pt array
       pt(i) = pt(i)  + sum(rd_interpol(1:n_temp_sub-1)*pt_sub(1:n_temp_sub-1)*(E_arr_sub(1:n_temp_sub-1)-E_arr_sub(0:n_temp_sub-2)))/bb(i-1,i) ! bb(i-1,i) is here because is equal to Edot/delta_E. Edot is in formula 50 Voit 1991. delta_E is also needed so we get the probability contribution to the entire energy bin of this term 
+
+      ! re-normalization in case of very high numbers 
+      if (sum(pt) > 10._real64**100) then
+         pt = pt/sum(pt)  
+      endif
          
    end do
 

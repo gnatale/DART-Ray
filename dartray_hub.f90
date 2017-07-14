@@ -1,4 +1,4 @@
-!> This module contains subroutines that execute the RT algorithms. The rt_type() keywork allows all the subroutines in DART-Ray to distinguish between the different parts of the RT calculation. The rt_algorithm() keyword is used to distinguish between the different RT algorithms.  
+!> Contains subroutines that execute the RT algorithms. The rt_type() keyword allows all the subroutines in DART-Ray to distinguish between the different parts of the RT calculation. The rt_algorithm() keyword is used to distinguish between the different RT algorithms.  
 MODULE dartray_hub
   use smooth_grid_routines
   use rt_routines

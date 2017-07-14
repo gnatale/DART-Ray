@@ -1,4 +1,4 @@
-!> Contains the main RT routines. In particular, the routines to calculate the ray-cell intersections, while a ray propagates through the 3D grid, and the corresponding contributions to the radiation field energy density and scattered radiation.  
+!> Contains the main radiation transfer routines. In particular, the routines to calculate the ray-cell intersections, while a ray propagates through the 3D grid, and the corresponding contributions to the radiation field energy density and scattered radiation.  
 MODULE rt_routines
   use smooth_grid_routines
   use healpix_routines

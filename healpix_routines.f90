@@ -1,3 +1,4 @@
+!> Contains slightly modified subroutines from the Healpix package.
 MODULE healpix_routines
   use iso_fortran_env
   
@@ -23,6 +24,9 @@ CONTAINS
 !  subroutine pix2ang_nest_8(nside, ipix, theta, phi)
 !    integer(int32), parameter :: MKD = I8B
 !#else
+!> renders theta and phi coordinates of the nominal pixel center
+!>     for the pixel number ipix (NESTED scheme)
+!>     given the map resolution parameter nside
   subroutine pix2ang_nest  (nside, ipix, theta, phi)
     !integer(int32), parameter :: MKD = INT32
 !#endif
@@ -132,14 +136,14 @@ CONTAINS
   end subroutine pix2ang_nest
 !#endif
 
+
+!=======================================================================
+!>     constructs the array giving x and y in the face from pixel number
+!>     for the nested (quad-cube like) ordering of pixels
+!>     the bits corresponding to x and y are interleaved in the pixel number
+!>     one breaks up the pixel number by even and odd bits
   subroutine mk_pix2xy()
-    !=======================================================================
-    !     constructs the array giving x and y in the face from pixel number
-    !     for the nested (quad-cube like) ordering of pixels
-    !
-    !     the bits corresponding to x and y are interleaved in the pixel number
-    !     one breaks up the pixel number by even and odd bits
-    !=======================================================================
+    
     INTEGER(KIND=INT32) ::  kpix, jpix, ix, iy, ip, id
     
     !cc cf block data      data      pix2x(1023) /0/
@@ -170,6 +174,9 @@ CONTAINS
     return
   end subroutine mk_pix2xy
 
+!>  given nside, returns npix such that npix = 12*nside^2
+!>  nside should be a power of 2 smaller than ns_max
+!>  if not, -1 is returned.
   function nside2npix(nside) result(npix_result)
     !=======================================================================
     ! given nside, returns npix such that npix = 12*nside^2
@@ -216,9 +223,9 @@ CONTAINS
 !=======================================================================
 !     ang2pix_nest
 !
-!     renders the pixel number ipix (NESTED scheme) for a pixel which contains
-!     a point on a sphere at coordinates theta and phi, given the map
-!     resolution parameter nside
+!>     renders the pixel number ipix (NESTED scheme) for a pixel which contains
+!>     a point on a sphere at coordinates theta and phi, given the map
+!>     resolution parameter nside.
 !
 ! 2009-03-09: calculations done directly at nside rather than ns_max
 !             with ifort, for x and y integers>0, 
@@ -385,15 +392,15 @@ CONTAINS
 !====================================================================
 !  neighbours_nest
 !
-!   Returns list n(8) of neighbours of pixel ipix (in NESTED scheme)
-!   the neighbours are ordered in the following way:
-!   First pixel is the one to the south (the one west of the south
-! direction is taken
-! for the pixels which don't have a southern neighbour). From
-! then on the neighbours are ordered in the clockwise direction
-! about the pixel with number ipix.
+!>   Returns list n(8) of neighbours of pixel ipix (in NESTED scheme)
+!>   the neighbours are ordered in the following way:
+!>   First pixel is the one to the south (the one west of the south
+!> direction is taken
+!> for the pixels which don't have a southern neighbour). From
+!> then on the neighbours are ordered in the clockwise direction
+!> about the pixel with number ipix.
 !
-!   nneigh is the number of neighbours (mostly 8, 8 pixels have 7 neighbours)
+!>   nneigh is the number of neighbours (mostly 8, 8 pixels have 7 neighbours)
 !
 !   Benjamin D. Wandelt October 1997
 !   Added to pix_tools in March 1999
@@ -923,7 +930,7 @@ CONTAINS
 
 !=======================================================================
 !  pix2xy_nest
-!     gives the x, y coords in a face from pixel number within the face (NESTED)
+!>     gives the x, y coords in a face from pixel number within the face (NESTED)
 !
 !     Benjamin D. Wandelt 13/10/97
 !
@@ -997,7 +1004,7 @@ CONTAINS
 !#endif  
 
 
-!! Returns i with even and odd bit positions interchanged.
+!> Returns i with even and odd bit positions interchanged.
 function swapLSBMSB(i)
   integer(int32) :: swapLSBMSB
   integer(int32), intent(in) :: i
@@ -1006,7 +1013,7 @@ function swapLSBMSB(i)
 end function swapLSBMSB  
 
 
-!! Returns i with even (0,2,4,...) bits inverted.
+!> Returns i with even (0,2,4,...) bits inverted.
 function invMSB(i)
   integer(int32) :: invMSB
   integer(int32), intent(in) :: i
@@ -1014,7 +1021,7 @@ function invMSB(i)
   invMSB = IEOR(i,evenbits)
 end function invMSB
 
-!! Returns i with odd (1,3,5,...) bits inverted.
+!> Returns i with odd (1,3,5,...) bits inverted.
 function invLSB(i)
   integer(int32) :: invLSB
   integer(int32), intent(in) :: i

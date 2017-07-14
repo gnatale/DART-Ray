@@ -1,4 +1,4 @@
-!> This module contains many of the variables used to define the properties of the 3D grid as well as subroutines for creating the grid, finding neighbour cells and more
+!> Contains most of variables used to define the properties of the 3D grid as well as subroutines for creating the grid and finding neighbour cells.
 MODULE smooth_grid_routines  
   use iso_fortran_env
   IMPLICIT NONE 

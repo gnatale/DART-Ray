@@ -1,4 +1,4 @@
-!> This module contains all the subroutines to handle the ray lists. A ray goes into a ray list if it is blocked because of the solid angle requirements for the ray beam not being fulfilled but still having substantial luminosity to be processed. There is a high list for rays to be split and a low list for rays that can potentially be joined. 
+!> Contains all the subroutines to handle the ray lists. A ray goes into a ray list if it is blocked because of the solid angle requirements for the ray beam not being fulfilled but still having substantial luminosity to be processed. There is a "high" list for rays to be split and a "low" list for rays that can potentially be joined together. 
 MODULE ray_list
   use iso_fortran_env
   use healpix_routines

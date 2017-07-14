@@ -1,4 +1,4 @@
-!> This module contains the standard routines for I/O.  
+!> Contains the all the routines for I/O.  
 MODULE io_routines
   use HDF5
   use smooth_grid_routines

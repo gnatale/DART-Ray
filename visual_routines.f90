@@ -1,3 +1,4 @@
+!> Contains the subroutines to calculate the surface brightness maps for either far-away observers or observers located within the radiation transfer model. 
 MODULE visual_routines
   use smooth_grid_routines
   use rt_routines

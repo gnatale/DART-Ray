@@ -1,3 +1,4 @@
+!> Contains the subroutines to specify the stellar emission and dust density distribution for the analytical galaxy geometry.
 MODULE user_routines_galaxy
 use smooth_grid_routines
 use iso_fortran_env
