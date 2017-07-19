@@ -86,7 +86,7 @@ MODULE sed_routines
  
 CONTAINS
 
-  !> Calculates stellar or dust emission SED from the i_obs() arrays. If keyword print_sed is not set TRUE, then it just returns. 
+  !> Calculates stellar or dust emission SED from the i_obs_arr() arrays. If keyword print_sed is not set TRUE, then it just returns. 
   subroutine calc_sed
     integer :: i, k, i0, i1
     real(kind=real64), allocatable :: out_sed_arr(:,:), in_sed_arr(:,:)
@@ -146,7 +146,7 @@ CONTAINS
   end subroutine calc_sed
 
   
-  !> Allocates sed arrays sed_arr(), sed_arr_dir(), sed_arr_sca().
+  !> Allocates arrays sed_arr(), sed_arr_dir(), sed_arr_sca().
   subroutine create_sed_arr
 
     if (.not. allocated(sed_arr)) then 
@@ -157,7 +157,7 @@ CONTAINS
        
   end subroutine create_sed_arr
 
-!> ! Sums up the i_obs at different wavelengths to obtain the total output sed in the input directions. Used only for the "sed" algorithm. 
+!> ! Sums up the i_obs() arrays at different wavelengths to obtain the total output sed in the input observer directions. Used only for the "sed" RT algorithm. 
   subroutine calc_sed_arrays 
     
     integer :: i
@@ -207,7 +207,7 @@ CONTAINS
 
   end subroutine calc_sed_arrays
 
-  !> Sums i_obs arrays to obtain emission SED.
+  !> Sums i_obs() arrays to obtain the total emission SED.
   subroutine sum_i_obs(il,sed_arr)
     real(kind=real64) :: sed_arr(0:,0:) !!! NOTE: this is not the sed_arr defined above 
     integer :: il,j
@@ -275,7 +275,7 @@ CONTAINS
     
   end subroutine set_dust_emission
 
-  !> Compare the newly calculated dens_stars_arr() with dens_stars_arr_prev(). If the relative difference is smaller than conv_en_lim(), it assigns TRUE to cnflag_dust(), thus stopping the dust heating iterations. It not, it subtracts from dens_stars_arr() the luminosity already processed in the previous dust heating iterations and it updates dens_stars_arr_prev(). 
+  !> Compare the newly calculated dens_stars_arr() with dens_stars_arr_prev(). If the relative difference is smaller than conv_en_lim(), it assigns TRUE to cnflag_dust(), thus stopping the dust heating iterations. If not, it subtracts from dens_stars_arr() the luminosity already processed in the previous dust heating iterations and it updates dens_stars_arr_prev(). 
   subroutine check_dens_stars_arr
     real(kind=real64), allocatable :: temp_dens_stars_arr(:,:)
     integer :: n_no_conv_el ! number of no convergence elements in dens_stars_arr 
@@ -373,7 +373,7 @@ CONTAINS
 
   end subroutine convert_ufield_ifield
   
-  !> Calculates the dust emission luminosity density in the case of the effective grain mode.
+  !> Calculates the dust emission luminosity density in the case of the effective grain dust heating mode.
   subroutine calc_dens_dustem 
       
     integer :: i,j, i0,im
@@ -427,7 +427,7 @@ CONTAINS
   end subroutine calc_dens_dustem
   
 
-  !>  Calculates the equilibrium emission for the grain mixture case. 
+  !>  Calculates the equilibrium emission for the grain mixture case (see dust_heating_type()). 
   subroutine calc_dens_dustem_equ
     
    integer :: i,j,ic,ig,imax,im,i0
@@ -503,7 +503,7 @@ CONTAINS
 
   end subroutine calc_dens_dustem_equ
 
-!> Allocates arrays used within the stochastically heated dust emission routines calc_dens_dustem_sto() and calc_dens_dustem_sto_lib(). 
+!> Allocates the arrays used within the stochastically heated dust emission routines calc_dens_dustem_sto() and calc_dens_dustem_sto_lib(). 
   subroutine allocate_sto_arrays
 
     allocate(dust_em_arr_fa(0:n_dust_maxsize_fa-1,0:lnum-1),tot_dust_em(0:lnum-1))
@@ -669,7 +669,7 @@ CONTAINS
 
   end subroutine calc_dens_dustem_sto
 
-!>  Calculates the stochastically heated emission at each position using the SED adaptive library approach of Natale et al.(2015).  
+!>  Calculates the stochastically heated dust emission at each position using the SED adaptive library approach of Natale et al.(2015).  
   subroutine calc_dens_dustem_sto_lib
     
    integer :: i,j,ic,ig,imax,im,i0,it
@@ -842,7 +842,7 @@ CONTAINS
 
 
 
-!> Calculates the equilibrium dust temperature given the absorption Q coefficient, the radiation field intensity of the stellar emission and of the dust emission in [W/m/m^2]. The input qabs_arr coefficient can also have units [e.g. m^2], as for the effective grain emission calculation, without changing the output equilibrium temperature. The output absorbed energy abs_en is in units of W/m^2 times the units of the input qabs_arr.  
+!> Calculates the equilibrium dust temperature given the absorption Q coefficient, the radiation field intensity of the stellar emission and of the dust emission in [W/m/m^2]. The input qabs_arr coefficients can have any unit [e.g. m^2], as for the effective grain emission calculation, without changing the output equilibrium temperature. The output absorbed energy abs_en is in units of W/m^2 times the units of the input qabs_arr.  
 subroutine calc_t_dust_equil(qabs_arr, dust_size, rf_stars, rf_dust, t_dust, abs_en)
 real(kind=real64) :: qabs_arr(0:), rf_stars(0:), rf_dust(0:), t_dust, dust_size
 !real(kind=real64) :: abs_int_rad_stars(0:lnum_stars-1) ! absorbed stellar emission energy / wavelength
@@ -852,10 +852,10 @@ integer :: i0, i
 
 i0 = i_lambda_dust(0)
 
-abs_int_rad_stars=qabs_arr(0:lnum_stars-1)*rf_stars  ! W/m/m^2
+abs_int_rad_stars=qabs_arr(0:lnum_stars-1)*rf_stars  ! W/m/m^2 * units(qabs)
 
 if (iterations_dustem > 0) then ! the >0 is because iterations_dustem is added + 1 before the following dust heating iteration.  
-   abs_int_rad_dust=qabs_arr(i0:lnum_tot-1)*rf_dust  ! W/m/m^2  ! absorbed dust emission energy / wavelength
+   abs_int_rad_dust=qabs_arr(i0:lnum_tot-1)*rf_dust  ! W/m/m^2 * units(qabs) ! absorbed dust emission energy / wavelength
 else 
    abs_int_rad_dust = 0 
 endif
@@ -873,7 +873,7 @@ t_dust=zbrent_tdust(qabs_arr(i0:lnum_tot-1),abs_en)
 
 end subroutine calc_t_dust_equil
 
-!> Calculates the moments of the dosage function (see Voit 1991, ApJ, 379, 122, needed for the dust stochastically heated calculation). 
+!> Calculates the moments of the dosage function (see Voit 1991, ApJ, 379, 122, needed for the stochastically heated dust emission calculation). 
 subroutine calc_rd_arr(dust_size)
 integer :: i0, i 
 real(kind=real64) ::  dust_size
@@ -900,7 +900,7 @@ rd_arr = rd_arr*pi*dust_size**2
 end subroutine calc_rd_arr
 
 
-  !> Sets the units of dens_stars_arr() in the dust RT algorithms. These units are W/m/pc^3 where meters refers to the wavelength.
+  !> Sets the units of dens_stars_arr() in the dust RT algorithms. These units are W/m/pc^3 where meters refer to the wavelength.
   subroutine set_units_dens_stars_arr
 
     ! set right units
@@ -935,7 +935,7 @@ end subroutine calc_rd_arr
    
   end function abs_en_diff
 
-!> Returns black body specific intensity in W/m^2/m/sr at wavelength la [m] and for temperature T_source [K]  (SI units)  
+!> Returns black body specific intensity in W/m^2/m/sr at wavelength la [m] and for temperature T_source [K].   
 real(kind=real64) function bplanck(T_source, la)
 
   real(kind=real64) :: t_source, la,a1,a2
@@ -1113,7 +1113,7 @@ subroutine prepare_dust_model
 end subroutine prepare_dust_model
 
 
-!> Loads the Qabs, Qsca, Qext and gsca factors from the tables in the dust opacity directory (from the TRUST benchmark project) and interpolate them to the input wavelength grid. Note that a further interpolation is needed to match the grain sizes to the values of the input tables. This is done in interpolate_q_grain_fa().
+!> Loads the Qabs, Qsca, Qext and gsca factors from the tables in the dust opacity directory and interpolates them to the input wavelength grid. Note that a further interpolation is needed to match the grain sizes to the values of the input size distribution tables. This is done in interpolate_q_grain_fa().
 subroutine load_opacity_param
 
   character(LEN=lcar) :: file_comp_arr(0:max_n_dust_comp-1)  
@@ -1342,7 +1342,7 @@ subroutine load_opacity_param
   
 end subroutine load_opacity_param
 
-!>  Loads the grain size distribution from the standard TRUST tables or from user provided files.
+!>  Loads the grain size distribution from the standard tables or from user provided files.
 subroutine load_fa_arr
 
   character(LEN=lcar) :: file_comp_arr(0:max_n_dust_comp-1)
@@ -1658,7 +1658,7 @@ grain_heat_capacity = grain_heat_capacity*1E-1 ! erg/cm^3/K -> J/m^3/K
 end subroutine load_cT_hT_tables
 
 
-!> Finds indeces of an array corresponding to the array value bin containing the input value val(). Note that the array should normally be sorted in ascending order. In case val is lower than array(0), it returns the indeces of the first two elements.  If val is higher than array(size(array)-1), it returns indeces of last two elements. The input array can be in the reversing order if the reverse_order keyword is set TRUE.    
+!> Finds indeces of an array corresponding to the array bin containing the input value val(). Note that the array has to be sorted either in ascending or in descending order. In the latter case, the reverse_order keyword has to be set to .TRUE. In case val is found to the left of array(0), it returns the indeces of the first two elements. If val is found to the right of array(size(array)-1), it returns indeces of last two elements.     
 subroutine value_locate(val, array,ig0,ig1, reverse_order) 
   IMPLICIT NONE
   real(kind=real64) :: val, array(0:)
@@ -1757,7 +1757,7 @@ end subroutine lin_interpolate
 
 
 
-!> Calculates integrated opacity coefficients kabs_arr(), ksca_arr(), kext_arr() and scattering phase function parameter gsca_arr() from the tabulated opacity parameters and the input grain size distributions. The resulting values for the integrated coefficients depends slightly on the specific interpolation scheme. For this reason, we add the option to upload these values from an input file as well using the keyword load_av_opacities() and file_int_opacities(). In this case, the code checks that the values obtained by this routine and those uploaded through the input file file_av_opacities() do not vary more than 5%. This is necessary to guarantee consistency between the dust emission and the stellar emission calculations within a few percents.    
+!> Calculates integrated opacity coefficients kabs_arr(), ksca_arr(), kext_arr() and scattering phase function parameter gsca_arr() from the tabulated grain opacity parameters and the input grain size distributions. The resulting values for the integrated coefficients depend slightly on the specific interpolation scheme. For this reason, we add the option to upload these values from an input file as well as using the keyword load_av_opacities() and file_int_opacities(). In this case, the code checks that the values obtained by this routine and those uploaded through the input file file_av_opacities() do not vary more than 5%. This is necessary to guarantee consistency between the dust emission and the stellar emission calculations within a few percents.    
 subroutine calc_total_opacity
   integer :: i, ic, ig 
   integer :: imax
@@ -2921,7 +2921,7 @@ subroutine find_lambda_index(lambda_in, il)
 
 end subroutine find_lambda_index
 
-!> Calculates integrals of the stellar emission radiation field spectra in the UV (<4430 A) and optical (> 4430) and assign each cell to a 2-dim bin of radiation field total intensity. Used in the SED library approach for the stochastically heated dust emission.   
+!> Calculates integrals of the stellar emission radiation field spectra in the UV (<4430 A) and optical (> 4430) and assign each cell to a 2-dim bin of radiation field total intensity. Used in the SED adaptive library approach for the stochastically heated dust emission.   
 subroutine bin_rad_field
   real(kind=real64) :: lambda_sep = 0.443  ! wavelength between UV and optical range 
   integer :: i0, i1, nw_uv, nw_opt 
