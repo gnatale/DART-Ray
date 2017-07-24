@@ -849,7 +849,6 @@ end subroutine reset_filenames
   
     write(unit,*) ' RADIATION TRANSFER PARAMETERS'
     write(unit,*) 'kp_sca_max=', kp_sca_max
-    write(unit,*) 'nside_sca=', nside_sca
     write(unit,*) 'rad_lim=', rad_lim
     write(unit,*) 'accuracy=', accuracy
     write(unit,*) 'conv_en_lim=',conv_en_lim
@@ -3629,12 +3628,12 @@ subroutine initialize_mpi
      stop
   endif
 
-
-  ! these are for MPIK version
-  ! if (np_mpi == 1) return  ! this is necessary for grid creation (to be done always using one MPI process) 
-  !print *, 'hostname = ', hostname(1:6)
-  !call get_environment_variable(hostname(1:6),nproc_num )
+  ! set OpenMP thread number 
   read(nproc_num, *) nproc 
+
+  ! set starting time 
+  time_start = mpi_wtime()
+  
 
 end subroutine initialize_mpi
 
@@ -4246,6 +4245,19 @@ subroutine read_stellar_library
 
 
 end subroutine read_stellar_library
+
+!> Prints the time passed from the beginning of the RT calculation in seconds. 
+subroutine print_time
+real(kind=real64) :: delta_time
+
+time =  mpi_wtime()
+
+delta_time = time-time_start
+
+if (main_prc) print *, 'TIME [s] = ', delta_time
+
+end subroutine print_time
+
 
 
 END MODULE io_routines

@@ -246,6 +246,9 @@ subroutine dartray_main_2D
 
    ! make output
    call make_output_dust
+
+   ! print time 
+   call print_time
       
  end subroutine dartray_dust 
 
@@ -373,6 +376,8 @@ end subroutine dartray_projection
       if (main_prc) print *, 'RT calculation completed' 
 
    endif
+
+   if (main_prc) call print_time
 
  end subroutine select_rt_type
 

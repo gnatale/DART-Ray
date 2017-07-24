@@ -5145,7 +5145,10 @@ subroutine store_reshape_arrays
      if (allocated(i_obs_in)) deallocate(i_obs_in, i_obs_in_arr)
      if (allocated(psel_av_arr)) deallocate(psel_av_arr) 
      if (allocated(lumcell)) deallocate(lumcell, tot_rad_en, tot_rad_en_or, lum_lost, lum_lost_prev)
-     if (allocated(iq_sca_node)) deallocate(iq_sca_node, iq_sca_id, iq_maps_id, lnum_node_arr, im_lambda_arr)
+     if (allocated(iq_sca_node)) deallocate(iq_sca_node, iq_sca_id)
+     if (allocated(iq_maps_id)) deallocate(iq_maps_id)
+     if (allocated(lnum_node_arr)) deallocate(lnum_node_arr)
+     if (allocated(im_lambda_arr)) deallocate(im_lambda_arr)
      if (allocated(map_arr_out)) deallocate(map_arr_out)
      if (allocated(map_in_arr_out)) deallocate(map_in_arr_out)
   endif

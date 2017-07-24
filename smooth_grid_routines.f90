@@ -555,6 +555,15 @@ MODULE smooth_grid_routines
   !> @param limit_scattering_iterations TRUE if a maximum number of iterations has to be set using max_sca_iterations()
   logical :: limit_scattering_iterations 
 
+  !-------------------------
+  ! Time parameters 
+
+  !> @param time_start Wall clock time at the beginning of the calculation.
+  real(kind=real64) :: time_start
+
+  !> @param time Wall clock time.
+  real(kind=real64) :: time
+
 CONTAINS
 
 !> This subroutine allocates the 3D grid arrays and initialize the first elements. 
