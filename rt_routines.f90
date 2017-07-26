@@ -2959,9 +2959,9 @@ endif
 
      im = im_lambda_arr(i)
      tot_npix_arr_local(im) = tot_npix_arr_local(im) + npix_arr(i+i0)
-
+    
   end do
-  
+
 end subroutine prepare_scaspe_splitting
 
 
@@ -4864,13 +4864,13 @@ integer :: i0l, i1l
 call set_i_opacity_arrays(i0l,i1l)
 
 el_out = 0 
-el_in = 0
+el_in = 1
 
 do i = 0, lnum -1 
    if (iq_sca_node(i)) then
-      call set_wavelength_index(i,k)
+      !call set_wavelength_index(i,k)
       el_out = el_out + npix_arr(i+i0l)*num_scaspe_pass   
-      el_in = el_in + npix_arr(i+i0l)*lnum_node_arr*num_scaspe_pass  ! NOTE: lnum_node_arr is an array
+      !el_in = el_in + npix_arr(i+i0l)*lnum_node_arr*num_scaspe_pass  ! NOTE: lnum_node_arr is an array
    endif
 
 end do 
@@ -4878,7 +4878,7 @@ end do
 do i = 0, np_mpi -1
 
    el_out(i) = el_out(i)*count(cc_list_all(:,i) /= -1)
-   el_in(i) = el_in(i)*count(cc_list_all(:,id_mpi) /= -1)
+   el_in(i) = el_in(i)*count(cc_list_all(:,id_mpi) /= -1)*tot_npix_arr_local(i)*num_scaspe_pass
    
 end do
 
@@ -4916,7 +4916,7 @@ do im = 0, np_mpi-1 ! ID of root process in mpi_scatterv
    if (lnum_node_arr(im) == 0) cycle 
 
    allocate(scaspe_buff(0:tot_npix_arr_local(im)*nproc_in*num_scaspe_pass-1))
-   
+
    call mpi_scatterv(scaspe_temp_send, el_out, i0_el_out, MPI_DOUBLE_PRECISION, scaspe_buff,el_in(im), MPI_DOUBLE_PRECISION, im,MPI_COMM_WORLD,ierr)
 
    if (nproc_in > 0) then 
@@ -5145,7 +5145,8 @@ subroutine store_reshape_arrays
      if (allocated(i_obs_in)) deallocate(i_obs_in, i_obs_in_arr)
      if (allocated(psel_av_arr)) deallocate(psel_av_arr) 
      if (allocated(lumcell)) deallocate(lumcell, tot_rad_en, tot_rad_en_or, lum_lost, lum_lost_prev)
-     if (allocated(iq_sca_node)) deallocate(iq_sca_node, iq_sca_id)
+     if (allocated(iq_sca_node)) deallocate(iq_sca_node)
+     if (allocated(iq_sca_id)) deallocate(iq_sca_id)
      if (allocated(iq_maps_id)) deallocate(iq_maps_id)
      if (allocated(lnum_node_arr)) deallocate(lnum_node_arr)
      if (allocated(im_lambda_arr)) deallocate(im_lambda_arr)

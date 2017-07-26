@@ -2345,18 +2345,22 @@ end subroutine read_lum_lost
    if (min_lambda_dust == -1) then 
 
       if (main_prc) print *, 'WARNING: min_lambda_dust input missing. Using default value min_lambda_dust = 1 um!'
-      select case(units_lambda)
-      case('um')
-         if (main_prc) print *, "WARNING: Input units_lambda is 'um' (microns)! "
-         min_lambda_dust = 1.
-      case ('not_provided')
-         if (main_prc) print *, 'ERROR: Input units_lambda missing'!'
-         call stop_prc         
-      case default
-         if (main_prc) print *, 'ERROR: units_lambda should be um (microns)!'
-         call stop_prc
-      end select
+      min_lambda_dust = 1.
    endif
+
+   ! units_lambda 
+   select case(units_lambda)
+   case('um')
+      if (main_prc) print *, "WARNING: Input units_lambda is 'um' (microns)! "
+         
+   case ('not_provided')
+      if (main_prc) print *, 'ERROR: Input units_lambda missing'!'
+      call stop_prc         
+   case default
+      if (main_prc) print *, 'ERROR: units_lambda should be um (microns)!'
+      call stop_prc
+   end select
+   
 
    do i = lnum_tot-1, 0, -1
 
