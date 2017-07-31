@@ -368,6 +368,9 @@ call assign_disk_type_ID(young_disk_type, young_disk_type_ID)
 call assign_disk_type_ID(thick_disk_type, thick_disk_type_ID)
 call assign_disk_type_ID(thin_disk_type, thin_disk_type_ID)
 
+! check input variables 
+call check_input_galaxy
+
 call print_done
 
 end subroutine read_input_galaxy
@@ -375,68 +378,793 @@ end subroutine read_input_galaxy
 !> Initialize variables specific for the galaxy grid creation program. 
 subroutine initialize_input_galaxy
 
-! old stellar disk 
-old = 0 
-hs_disk_b = 0
-zs_disk = 0
-zs_disk_r1 = 0
-zs_disk_rsun = 0 
-chi_disk =0
-hsin = 0
-!hs_disk_arr ! initialized above
-!hs_disk2_arr
-!id_hs_disk_arr
-theta_disk_ellipt = 0 
-
-! young stellar disk 
-sfr = 0 
-hs_tdisk = 0
-hs_tdisk2 = 0
-zs_tdisk = 0
-zs_tdisk_r1 = 0
-zs_tdisk_rsun = 0
-chi_tdisk = 0
-hs1in = 0 
-theta_tdisk_ellipt = 0
-
-! bulge 
-reff = 0 
-acap_bulge = 0
-ellipt = 1
-mtrunc = 0
-bd_ratio = 0
-nsersic = 4
-theta_bulge = 0
-ellipt_xy =  1
-
-! thick dust disk
-tau1 = 0
-hd_disk = 0
-hd_disk2 = 0
-zd_disk = 0
-zd_disk_r1 = 0
-zd_disk_rsun = 0
-chi_dust_disk = 0
-hdin = 0
-theta_dust_disk_ellipt = 0
-
-! thin dust disk
-tau2 = 0
-hd_tdisk = 0
-hd_tdisk2 = 0 
-zd_tdisk = 0
-zd_tdisk_r1 = 0
-zd_tdisk_rsun = 0
-chi_dust_tdisk = 0
-hd1in = 0 
-theta_dust_tdisk_ellipt = 0
-
-! Character variables
+! galaxy input string 
+label_model_lambda_grid = 'not_provided'
+dir_grid = 'not_provided'
+grid_file = 'not_provided'
+grid_info_file = 'not_provided'
+file_lambda_list = 'not_provided'
+units_lambda = 'not_provided'
+grid_type = 'not_provided'
+old_disk_type = 'not_provided'
+young_disk_type = 'not_provided'
+thick_disk_type = 'not_provided'
+thin_disk_type = 'not_provided'
 file_old_star_sed = 'not_provided'
 file_young_star_sed = 'not_provided'
 subdivision_criteria = 'not_provided' 
 
+! galaxy input var 
+lambda_ref = 0 
+lambda_min = 0 
+lambda_max = 0 
+rtrun = -1 
+rsun = -1 
+max_z = -1 
+max_rad = -1 
+sha = -1 
+sha1 = -1 
+omega_max = -1 
+modelsize = -1 
+base = [0,0] 
+max_ncell = -1 
+max_lvl = -1 
+min_lvl = -1 
+max_dtau = -1 
+max_dlum = -1 
+n_dust_size_qabs = 0 
+n_dust_wave_qabs = 0 
+z_subd_lim = -1 
+R_subd_lim = -1 
+z_subd_lim2 = -1
+
+! old stellar disk 
+old = -1 
+hs_disk_b = -1
+zs_disk = -1
+zs_disk_r1 = -1
+zs_disk_rsun = -1 
+chi_disk = -100000
+hsin = -1
+!hs_disk_arr ! initialized above
+!hs_disk2_arr
+!id_hs_disk_arr
+theta_disk_ellipt = -1 
+
+! young stellar disk 
+sfr = -1 
+hs_tdisk = -1
+hs_tdisk2 = -1
+zs_tdisk = -1
+zs_tdisk_r1 = -1
+zs_tdisk_rsun = -1
+chi_tdisk = -100000
+hs1in = -1 
+theta_tdisk_ellipt = -1
+
+! bulge 
+reff = -1 
+acap_bulge = -1
+ellipt = -1
+mtrunc = -1
+bd_ratio = -1
+nsersic = -1
+theta_bulge = -361
+ellipt_xy =  -1
+
+! thick dust disk
+tau1 = -1
+hd_disk = -1
+hd_disk2 = -1
+zd_disk = -1
+zd_disk_r1 = -1
+zd_disk_rsun = -1
+chi_dust_disk = -100000
+hdin = -1
+theta_dust_disk_ellipt = -1
+
+! thin dust disk
+tau2 = -1
+hd_tdisk = -1
+hd_tdisk2 = -1 
+zd_tdisk = -1
+zd_tdisk_r1 = -1
+zd_tdisk_rsun = -1
+chi_dust_tdisk = -100000
+hd1in = -1 
+theta_dust_tdisk_ellipt = -1
+
+! input logical 
+input_av_opacities = .FALSE.
+
+
 end subroutine initialize_input_galaxy
+
+!> Checks that the input variables have allowed values. 
+subroutine check_input_galaxy
+
+logical :: error 
+
+error = .FALSE.
+
+! label_model_lambda_grid 
+if (label_model_lambda_grid == 'not_provided') then 
+   print *,  'ERROR: Input label_model_lambda_grid missing'
+   error = .TRUE.
+endif
+
+! dir_grid 
+if (dir_grid == 'not_provided') then 
+   print *,  'ERROR: Input dir_grid missing'
+   error = .TRUE.
+else
+   call check_dir_existence(dir_grid, .FALSE.)  
+endif
+
+! grid_file
+if (grid_file == 'not_provided') then 
+   print *,  'ERROR: Input grid_file missing'
+   error = .TRUE.
+endif
+
+! grid_file_info
+if (grid_info_file == 'not_provided') then 
+   print *,  'ERROR: Input grid_info missing'
+   error = .TRUE.
+endif
+
+! file_lambda_list
+if (file_lambda_list == 'not_provided') then 
+   print *,  'ERROR: Input file_lambda_list missing'
+   error = .TRUE.
+endif
+
+! units_lambda
+if (units_lambda == 'not_provided') then 
+   print *,  'ERROR: Input units_lambda missing (it has to be always um)'
+   error = .TRUE.
+endif
+
+!grid_type 
+if (grid_type == 'not_provided') then 
+   print *,  'ERROR: Input grid_type missing'
+   error = .TRUE.
+endif
+
+!old_disk_type 
+if (old_disk_type == 'not_provided') then 
+   print *,  'ERROR: Input old_disk_type missing'
+   error = .TRUE.
+endif
+
+!young_disk_type
+if (young_disk_type == 'not_provided') then 
+   print *,  'ERROR: Input young_disk_type missing'
+   error = .TRUE.
+endif
+
+!thick_disk_type
+if (thick_disk_type == 'not_provided') then 
+   print *,  'ERROR: Input thick_disk_type missing'
+   error = .TRUE.
+endif
+
+!thin_disk_type
+if (thin_disk_type == 'not_provided') then 
+   print *,  'ERROR: Input thin_disk_type missing'
+   error = .TRUE.
+endif
+
+!file_old_star_sed
+if (file_old_star_sed == 'not_provided') then 
+   print *,  'ERROR: Input file_old_star_sed missing'
+   error = .TRUE.
+endif
+
+!file_young_star_sed
+if (file_young_star_sed == 'not_provided') then 
+   print *,  'ERROR: Input file_young_star_sed missing'
+   error = .TRUE.
+endif
+
+!subdivision_criteria
+if (subdivision_criteria == 'not_provided') then 
+   print *,  'ERROR: Input subdivision_criteria missing'
+   error = .TRUE.
+endif
+
+! lambda_ref
+if (lambda_ref < 0.09 .or. lambda_ref > 1000) then
+     print *, 'ERROR: Invalid lambda_ref value'
+     print *, 'lambda_ref = ', lambda_ref 
+     print *, 'Allowed range = [0.09,1000]'
+     error = .TRUE.
+  endif
+
+! lambda_min
+if (lambda_min < 0.09 .or. lambda_min > 1000) then
+     print *, 'ERROR: Invalid lambda_min value'
+     print *, 'lambda_min = ', lambda_min 
+     print *, 'Allowed range = [0.09,1000]'
+     error = .TRUE.
+  endif
+
+! lambda_max
+if (lambda_max < 0.09 .or. lambda_max > 1000) then
+     print *, 'ERROR: Invalid lambda_max value'
+     print *, 'lambda_min = ', lambda_max 
+     print *, 'Allowed range = [0.09,1000]'
+     error = .TRUE.
+  endif
+
+! lambda_min < lambda_max
+if (lambda_min > lambda_max) then 
+   print *, 'ERROR: lambda_min > lambda_max!' 
+   error = .TRUE. 
+endif
+
+! rtrun
+if (rtrun < 0.) then
+   print *, 'ERROR: Invalid rtrun value'
+   print *, 'rtrun = ', rtrun 
+   print *, 'Allowed range = [0.,Inf]'
+   error = .TRUE.
+endif
+
+! rsun
+if (rsun < 0.) then
+   print *, 'ERROR: Invalid rsun value'
+   print *, 'rsun = ', rsun 
+   print *, 'Allowed range = [0.,Inf]'
+   error = .TRUE.
+endif
+
+! max_z
+if (max_z < 0.) then
+   print *, 'ERROR: Invalid max_z value'
+   print *, 'max_z = ', max_z 
+   print *, 'Allowed range = [0.,Inf]'
+   error = .TRUE. 
+endif
+
+! max_rad
+if (max_rad < 0.) then
+   print *, 'ERROR: Invalid max_rad value'
+   print *, 'max_rad = ', max_rad
+   print *, 'Allowed range = (0.,Inf]'
+   error = .TRUE.
+endif
+
+! sha
+if (sha < 0.) then
+   print *, 'ERROR: Invalid sha value'
+   print *, 'sha = ', sha
+   print *, 'Allowed range = [0.,Inf]'
+   error = .TRUE.
+endif
+
+! sha1
+if (sha1 < 0.) then
+   print *, 'ERROR: Invalid sha1 value'
+   print *, 'sha1 = ', sha1
+   print *, 'Allowed range = [0.,Inf]'
+   error = .TRUE.
+endif
+
+if (subdivision_criteria == 'milky_way') then 
+   ! omega_max
+   if (omega_max < 0.) then
+      print *, 'ERROR: Invalid omega_max value'
+      print *, 'omega_max = ', omega_max
+      print *, 'Allowed range = [0.,Inf]'
+      error = .TRUE.
+   endif
+endif
+
+! modelsize
+if (modelsize <= 0.) then
+   print *, 'ERROR: Invalid modelsize value'
+   print *, 'modelsize = ', modelsize
+   print *, 'Allowed range = (0.,Inf]'
+   error = .TRUE.
+endif
+
+! base
+if (minval(base) < 2) then 
+   print *, 'ERROR: Invalid base values'
+   print *, 'base = ', base
+   print *, 'Allowed range = [2.,Inf]'
+   error = .TRUE.
+endif
+
+! max_ncell
+if (max_ncell < 100000) then
+   print *, 'ERROR: Invalid max_ncell value'
+   print *, 'max_ncell = ', max_ncell
+   print *, 'Allowed range = [100000,Inf]'
+   error = .TRUE.
+endif
+
+! max_lvl
+if (max_lvl < 1) then
+   print *, 'ERROR: Invalid max_lvl value'
+   print *, 'max_lvl = ', max_lvl
+   print *, 'Allowed range = [1,Inf]'
+   error = .TRUE.
+endif
+
+! min_lvl
+if (min_lvl < 1) then
+   print *, 'ERROR: Invalid min_lvl value'
+   print *, 'min_lvl = ', min_lvl
+   print *, 'Allowed range = [1,Inf]'
+   error = .TRUE.
+endif
+
+! min_lvl < max_lvl
+if (min_lvl > max_lvl) then 
+   print *, 'ERROR: min_lvl > max_lvl!' 
+   error = .TRUE.
+endif
+
+! max_dtau
+if (max_dtau < 0) then
+   print *, 'ERROR: Invalid max_dtau value'
+   print *, 'max_dtau = ', max_dtau
+   print *, 'Allowed range = [0,Inf]'
+   error = .TRUE.
+endif
+
+! max_dlum
+if (max_dlum < 0) then
+   print *, 'ERROR: Invalid max_dlum value'
+   print *, 'max_dlum = ', max_dlum
+   print *, 'Allowed range = [0,Inf]'
+   error = .TRUE.
+endif
+
+! z_subd_lim
+if (z_subd_lim < 0.) then
+   print *, 'ERROR: Invalid z_subd_lim value'
+   print *, 'z_subd_lim =', z_subd_lim
+   print *, 'Allowed range = (0.,Inf]'
+   error = .TRUE.
+endif
+
+! R_subd_lim
+if (R_subd_lim < 0.) then
+   print *, 'ERROR: Invalid R_subd_lim value'
+   print *, 'R_subd_lim =', R_subd_lim
+   print *, 'Allowed range = (0.,Inf]'
+   error = .TRUE.
+endif
+
+if (subdivision_criteria == 'milky_way') then 
+   ! z_subd_lim2
+   if (z_subd_lim2 < 0.) then
+      print *, 'ERROR: Invalid z_subd_lim2 value'
+      print *, 'z_subd_lim2 =', z_subd_lim2
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+endif
+
+if (grid_type == 'all' .or. grid_type == 'disk' .or. grid_type == 'bulge') then 
+   ! old
+   if (old < 0.) then
+      print *, 'ERROR: Invalid old value'
+      print *, 'old =', old
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+endif
+
+if (grid_type == 'all' .or. grid_type == 'disk') then 
+
+   ! hs_disk_b
+   if (hs_disk_b < 0.) then
+      print *, 'ERROR: Invalid hs_disk_b value'
+      print *, 'hs_disk_b =', hs_disk_b
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+
+   ! zs_disk
+   if (zs_disk < 0.) then
+      print *, 'ERROR: Invalid zs_disk value'
+      print *, 'zs_disk =', zs_disk
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+
+   if (old_disk_type_ID == flared_expz_ID .or. old_disk_type_ID == flared_sech2z_ID .or. old_disk_type_ID == ellipt_expR_expz_ID .or. old_disk_type_ID == ellipt_expR_sech2z_ID) then 
+
+      ! zs_disk_r1
+      if (zs_disk_r1 < 0.) then
+         print *, 'ERROR: Invalid zs_disk_r1 value'
+         print *, 'zs_disk_r1 =', zs_disk_r1
+         print *, 'Allowed range = (0.,Inf]'
+         error = .TRUE.
+      endif
+
+      ! zs_disk_rsun
+      if (zs_disk_rsun < 0.) then
+         print *, 'ERROR: Invalid zs_disk_rsun value'
+         print *, 'zs_disk_rsun =', zs_disk_rsun
+         print *, 'Allowed range = (0.,Inf]'
+         error = .TRUE.
+      endif
+
+      ! hsin
+      if (hsin <= 0.) then
+         print *, 'ERROR: Invalid hsin value'
+         print *, 'hsin =', hsin
+         print *, 'Allowed range = (0.,Inf]'
+         error = .TRUE.
+      endif
+
+   endif
+
+   if (old_disk_type_ID == flared_expz_ID .or. old_disk_type_ID == flared_sech2z_ID) then 
+
+      ! chi_disk
+      if (chi_disk == -100000) then
+         print *, 'ERROR: chi_disk value not input'
+         print *, 'chi_disk =', chi_disk
+         print *, 'Allowed range = (-Inf,Inf]'
+         error = .TRUE.
+      endif
+
+   endif
+
+   if (old_disk_type_ID == ellipt_expR_expz_ID .or. old_disk_type_ID == ellipt_expR_sech2z_ID) then 
+
+      ! theta_disk_ellipt 
+      if (theta_disk_ellipt < 0.) then
+         print *, 'ERROR: Invalid theta_disk_ellipt value'
+         print *, 'theta_disk_ellipt =', theta_disk_ellipt
+         print *, 'Allowed range = (0.,Inf]'
+         error = .TRUE.
+      endif
+   endif
+
+endif
+
+if (grid_type == 'all' .or. grid_type == 'tdisk') then 
+  
+   ! sfr
+   if (sfr < 0.) then
+      print *, 'ERROR: Invalid sfr value'
+      print *, 'sfr =', sfr
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+
+   ! hs_tdisk
+   if (hs_tdisk < 0.) then
+      print *, 'ERROR: Invalid hs_tdisk value'
+      print *, 'hs_tdisk =', hs_tdisk
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+
+   if (young_disk_type_ID == ellipt_expR_expz_ID .or. young_disk_type_ID == ellipt_expR_sech2z_ID) then 
+
+      ! hs_tdisk2
+      if (hs_tdisk2 < 0.) then
+         print *, 'ERROR: Invalid hs_tdisk2 value'
+         print *, 'hs_tdisk2 =', hs_tdisk2
+         print *, 'Allowed range = (0.,Inf]'
+         error = .TRUE.
+      endif
+
+      ! theta_tdisk_ellipt 
+      if (theta_tdisk_ellipt < 0.) then
+         print *, 'ERROR: Invalid theta_tdisk_ellipt value'
+         print *, 'theta_tdisk_ellipt =', theta_tdisk_ellipt
+         print *, 'Allowed range = (0.,Inf]'
+         error = .TRUE.
+      endif
+
+   endif
+
+   ! zs_tdisk
+   if (zs_tdisk < 0.) then
+      print *, 'ERROR: Invalid zs_tdisk value'
+      print *, 'zs_tdisk =', zs_tdisk
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+
+   if (young_disk_type_ID == flared_expz_ID .or. young_disk_type_ID == flared_sech2z_ID .or. young_disk_type_ID == ellipt_expR_expz_ID .or. young_disk_type_ID == ellipt_expR_sech2z_ID) then 
+
+
+      ! zs_tdisk_r1
+      if (zs_tdisk_r1 < 0.) then
+         print *, 'ERROR: Invalid zs_tdisk_r1 value'
+         print *, 'zs_tdisk_r1 =', zs_tdisk_r1
+         print *, 'Allowed range = (0.,Inf]'
+         error = .TRUE.
+      endif
+
+      ! zs_tdisk_rsun
+      if (zs_tdisk_rsun < 0.) then
+         print *, 'ERROR: Invalid zs_tdisk_rsun value'
+         print *, 'zs_tdisk_rsun =', zs_tdisk_rsun
+         print *, 'Allowed range = (0.,Inf]'
+         error = .TRUE.
+      endif
+
+      ! hs1in
+      if (hs1in <= 0.) then
+         print *, 'ERROR: Invalid hs1in value'
+         print *, 'hs1in =', hs1in
+         print *, 'Allowed range = (0.,Inf]'
+         error = .TRUE.
+      endif
+
+   endif
+
+   if (young_disk_type_ID == flared_expz_ID .or. young_disk_type_ID == flared_sech2z_ID) then 
+   
+      ! chi_tdisk
+      if (chi_tdisk == -100000) then
+         print *, 'ERROR: chi_tdisk value not input'
+         print *, 'chi_tdisk =', chi_tdisk
+         print *, 'Allowed range = (-Inf,Inf]'
+         error = .TRUE.
+      endif
+   
+   endif
+      
+endif
+
+if (grid_type == 'all' .or. grid_type == 'bulge') then 
+
+   !reff 
+   if (reff <= 0.) then
+      print *, 'ERROR: Invalid reff value'
+      print *, 'reff =', reff
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+
+   !acap_bulge 
+   if (acap_bulge <= 0.) then
+      print *, 'ERROR: Invalid acap_bulge value'
+      print *, 'acap_bulge =', acap_bulge
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+   
+   !ellipt 
+   if (ellipt <= 0) then
+      print *, 'ERROR: Invalid ellipt value'
+      print *, 'ellipt =', ellipt
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+
+   !mtrunc 
+   if (mtrunc < 0) then
+      print *, 'ERROR: Invalid mtrunc value'
+      print *, 'mtrunc =', mtrunc
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+
+   !bd_ratio 
+   if (bd_ratio < 0) then
+      print *, 'ERROR: Invalid bd_ratio value'
+      print *, 'bd_ratio =', bd_ratio
+      print *, 'Allowed range = [0.,Inf]'
+      error = .TRUE.
+   endif
+
+   !nsersic 
+   if (nsersic < 1 .or. nsersic > 10 ) then
+      print *, 'ERROR: Invalid nsersic value'
+      print *, 'nsersic =', nsersic
+      print *, 'Allowed range = [1.,10]'
+      error = .TRUE.
+   endif
+
+   !theta_bulge 
+   if (abs(theta_bulge) > 360) then
+      print *, 'ERROR: Invalid theta_bulge value'
+      print *, 'theta_bulge =', theta_bulge
+      print *, 'Allowed range = [-360,360]'
+      error = .TRUE.
+   endif
+
+   !ellipt_xy 
+   if (ellipt_xy <= 0) then
+      print *, 'ERROR: Invalid ellipt_xy value'
+      print *, 'ellipt_xy =', ellipt_xy
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+
+endif
+
+
+!tau1 
+if (tau1 < 0) then
+   print *, 'ERROR: Invalid tau1 value'
+   print *, 'tau1 =', tau1
+   print *, 'Allowed range = (0.,Inf]'
+   error = .TRUE.
+endif
+
+!hd_disk 
+if (hd_disk <= 0) then
+   print *, 'ERROR: Invalid hd_disk value'
+   print *, 'hd_disk =', hd_disk
+   print *, 'Allowed range = (0.,Inf]'
+   error = .TRUE.
+endif
+
+if (thick_disk_type_ID == ellipt_expR_expz_ID .or. thick_disk_type_ID == ellipt_expR_sech2z_ID) then
+
+   !hd_disk2 
+   if (hd_disk2 <= 0) then
+      print *, 'ERROR: Invalid hd_disk2 value'
+      print *, 'hd_disk2 =', hd_disk2
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+
+   !theta_dust_disk_ellipt 
+   if (theta_dust_disk_ellipt < 0) then
+      print *, 'ERROR: Invalid theta_dust_disk_ellipt value'
+      print *, 'theta_dust_disk_ellipt =', theta_dust_disk_ellipt
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+
+endif
+
+
+!zd_disk 
+if (zd_disk <= 0) then
+   print *, 'ERROR: Invalid zd_disk value'
+   print *, 'zd_disk =', zd_disk
+   print *, 'Allowed range = (0.,Inf]'
+   error = .TRUE.
+endif
+
+if (thick_disk_type_ID == flared_expz_ID .or. thick_disk_type_ID == flared_sech2z_ID .or. thick_disk_type_ID == ellipt_expR_expz_ID .or. thick_disk_type_ID == ellipt_expR_sech2z_ID) then 
+
+   !zd_disk_r1 
+   if (zd_disk_r1 < 0) then
+      print *, 'ERROR: Invalid zd_disk_r1 value'
+      print *, 'zd_disk_r1 =', zd_disk_r1
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+   
+   !zd_disk_rsun 
+   if (zd_disk_rsun < 0) then
+      print *, 'ERROR: Invalid zd_disk_rsun value'
+      print *, 'zd_disk_rsun =', zd_disk_rsun
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+
+   !hdin 
+   if (hdin <= 0) then
+      print *, 'ERROR: Invalid hdin value'
+      print *, 'hdin =', hdin
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+
+endif
+
+if (thick_disk_type_ID == flared_expz_ID .or. thick_disk_type_ID == flared_sech2z_ID) then 
+
+   !chi_dust_disk 
+   if (chi_dust_disk == chi_dust_disk) then
+      print *, 'ERROR: Invalid chi_dust_disk value'
+      print *, 'chi_dust_disk =', chi_dust_disk
+      print *, 'Allowed range = (-Inf,Inf]'
+      error = .TRUE.
+   endif
+endif
+
+
+!tau2 
+if (tau2 < 0) then
+   print *, 'ERROR: Invalid tau2 value'
+   print *, 'tau2 =', tau2
+   print *, 'Allowed range = (0.,Inf]'
+   error = .TRUE.
+endif
+
+!hd_tdisk 
+if (hd_tdisk <= 0) then
+   print *, 'ERROR: Invalid hd_tdisk value'
+   print *, 'hd_tdisk =', hd_tdisk
+   print *, 'Allowed range = (0.,Inf]'
+   error = .TRUE.
+endif
+
+if (thin_disk_type_ID == ellipt_expR_expz_ID .or. thin_disk_type_ID == ellipt_expR_sech2z_ID) then
+
+   !hd_tdisk2 
+   if (hd_tdisk2 <= 0) then
+      print *, 'ERROR: Invalid hd_tdisk2 value'
+      print *, 'hd_tdisk2 =', hd_tdisk2
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+
+   !theta_dust_tdisk_ellipt 
+   if (theta_dust_tdisk_ellipt < 0) then
+      print *, 'ERROR: Invalid theta_dust_tdisk_ellipt value'
+      print *, 'theta_dust_tdisk_ellipt =', theta_dust_tdisk_ellipt
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+
+endif
+
+!zd_tdisk 
+if (zd_tdisk <= 0) then
+   print *, 'ERROR: Invalid zd_tdisk value'
+   print *, 'zd_tdisk =', zd_tdisk
+   print *, 'Allowed range = (0.,Inf]'
+   error = .TRUE.
+endif
+
+if (thin_disk_type_ID == flared_expz_ID .or. thin_disk_type_ID == flared_sech2z_ID .or. thin_disk_type_ID == ellipt_expR_expz_ID .or. thin_disk_type_ID == ellipt_expR_sech2z_ID) then 
+
+   !zd_tdisk_r1 
+   if (zd_tdisk_r1 < 0) then
+      print *, 'ERROR: Invalid zd_tdisk_r1 value'
+      print *, 'zd_tdisk_r1 =', zd_tdisk_r1
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+
+   !zd_tdisk_rsun 
+   if (zd_tdisk_rsun < 0) then
+      print *, 'ERROR: Invalid zd_tdisk_rsun value'
+      print *, 'zd_tdisk_rsun =', zd_tdisk_rsun
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+
+   !hdin 
+   if (hd1in <= 0) then
+      print *, 'ERROR: Invalid hd1in value'
+      print *, 'hdin =', hd1in
+      print *, 'Allowed range = (0.,Inf]'
+      error = .TRUE.
+   endif
+
+endif
+
+if (thin_disk_type_ID == flared_expz_ID .or. thin_disk_type_ID == flared_sech2z_ID) then 
+
+   !chi_dust_tdisk 
+   if (chi_dust_tdisk == chi_dust_tdisk) then
+      print *, 'ERROR: Invalid chi_dust_tdisk value'
+      print *, 'chi_dust_tdisk =', chi_dust_tdisk
+      print *, 'Allowed range = (-Inf,Inf]'
+      error = .TRUE.
+   endif
+
+endif
+
+
+if (error) then 
+   print *, 'STOP(check_input_galaxy): Some wrong input variables!'
+   STOP
+endif
+
+
+end subroutine check_input_galaxy
 
 
 !> Checks that lambda_arr contains at least two wavelengths of which one is equal to 0.443 um (B-band). This wavelength is necessary for calc_scaling_factors_dust() to work properly. 
@@ -764,77 +1492,81 @@ integer :: disk_type_ID
 
 if (disk_comp == 'disk') then 
    a=eta_disk0
-   hc=hs_disk
-   r1=hsin
+   hc=hs_disk   
    zc=zs_disk
 
    if (disk_type_ID == flared_expz_ID .or. disk_type_ID == flared_sech2z_ID ) then 
       zc_r1=zs_disk_r1
       zc_rsun=zs_disk_rsun
       chi_par = chi_disk
+      r1=hsin
    endif
 
    if (disk_type_ID == ellipt_expR_expz_ID .or. disk_type_ID == ellipt_expR_sech2z_ID) then 
       hc2=hs_disk2
       zc_r1=zs_disk_r1
       zc_rsun=zs_disk_rsun
+      r1=hsin
       theta_ellipt = theta_disk_ellipt
    endif
 
 elseif (disk_comp == 'tdisk') then 
    a=eta_tdisk0
-   hc=hs_tdisk
-   r1=hs1in
+   hc=hs_tdisk   
    zc=zs_tdisk
 
    if (disk_type_ID == flared_expz_ID .or. disk_type_ID == flared_sech2z_ID) then 
       zc_r1=zs_tdisk_r1
       zc_rsun=zs_tdisk_rsun
       chi_par = chi_tdisk
+      r1=hs1in
    endif
 
    if (disk_type_ID == ellipt_expR_expz_ID .or. disk_type_ID == ellipt_expR_sech2z_ID) then 
       hc2=hs_tdisk2
       zc_r1=zs_tdisk_r1
       zc_rsun=zs_tdisk_rsun
+      r1=hs1in
       theta_ellipt = theta_tdisk_ellipt
    endif
 
 elseif (disk_comp == 'dust_disk') then 
    a=kext_disk0
-   hc=hd_disk
-   r1=hdin
+   hc=hd_disk   
    zc=zd_disk
 
    if (disk_type_ID == flared_expz_ID .or. disk_type_ID == flared_sech2z_ID) then 
       zc_r1=zd_disk_r1
       zc_rsun=zd_disk_rsun
       chi_par = chi_dust_disk
+      r1=hdin
    endif
 
    if (disk_type_ID == ellipt_expR_expz_ID .or. disk_type_ID == ellipt_expR_sech2z_ID) then 
       hc2=hd_disk2
       zc_r1=zd_disk_r1
       zc_rsun=zd_disk_rsun
+      r1=hdin
       theta_ellipt = theta_dust_disk_ellipt
    endif
 
 else if (disk_comp == 'dust_tdisk') then 
    a=kext_tdisk0
-   hc=hd_tdisk
-   r1=hd1in
+   hc=hd_tdisk   
    zc=zd_tdisk
 
    if (disk_type_ID == flared_expz_ID .or. disk_type_ID == flared_sech2z_ID) then 
       zc_r1=zd_tdisk_r1
       zc_rsun=zd_tdisk_rsun
       chi_par = chi_dust_tdisk
+      r1=hd1in
    endif
 
    if (disk_type_ID == ellipt_expR_expz_ID .or. disk_type_ID == ellipt_expR_sech2z_ID) then 
       hc2=hd_tdisk2
       zc_r1=zd_tdisk_r1
       zc_rsun=zd_tdisk_rsun
+      r1=hd1in
       theta_ellipt = theta_dust_tdisk_ellipt
    endif
 
