@@ -574,7 +574,7 @@ if (subdivision_criteria == 'not_provided') then
 endif
 
 ! lambda_ref
-if (lambda_ref < 0.09 .or. lambda_ref > 1000) then
+if (lambda_ref < 0.089 .or. lambda_ref > 1000) then
      print *, 'ERROR: Invalid lambda_ref value'
      print *, 'lambda_ref = ', lambda_ref 
      print *, 'Allowed range = [0.09,1000]'
@@ -582,7 +582,7 @@ if (lambda_ref < 0.09 .or. lambda_ref > 1000) then
   endif
 
 ! lambda_min
-if (lambda_min < 0.09 .or. lambda_min > 1000) then
+if (lambda_min < 0.089 .or. lambda_min > 1000) then
      print *, 'ERROR: Invalid lambda_min value'
      print *, 'lambda_min = ', lambda_min 
      print *, 'Allowed range = [0.09,1000]'
@@ -590,7 +590,7 @@ if (lambda_min < 0.09 .or. lambda_min > 1000) then
   endif
 
 ! lambda_max
-if (lambda_max < 0.09 .or. lambda_max > 1000) then
+if (lambda_max < 0.089 .or. lambda_max > 1000) then
      print *, 'ERROR: Invalid lambda_max value'
      print *, 'lambda_min = ', lambda_max 
      print *, 'Allowed range = [0.09,1000]'
@@ -1064,7 +1064,7 @@ endif
 if (thick_disk_type_ID == flared_expz_ID .or. thick_disk_type_ID == flared_sech2z_ID) then 
 
    !chi_dust_disk 
-   if (chi_dust_disk == chi_dust_disk) then
+   if (chi_dust_disk == -100000) then
       print *, 'ERROR: Invalid chi_dust_disk value'
       print *, 'chi_dust_disk =', chi_dust_disk
       print *, 'Allowed range = (-Inf,Inf]'
@@ -1148,7 +1148,7 @@ endif
 if (thin_disk_type_ID == flared_expz_ID .or. thin_disk_type_ID == flared_sech2z_ID) then 
 
    !chi_dust_tdisk 
-   if (chi_dust_tdisk == chi_dust_tdisk) then
+   if (chi_dust_tdisk == -100000) then
       print *, 'ERROR: Invalid chi_dust_tdisk value'
       print *, 'chi_dust_tdisk =', chi_dust_tdisk
       print *, 'Allowed range = (-Inf,Inf]'

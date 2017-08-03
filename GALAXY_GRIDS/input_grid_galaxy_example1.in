@@ -63,6 +63,8 @@ ellipt=0.3,
 mtrunc=3,
 bd_ratio=1.,
 nsersic=4
+theta_bulge= 0 
+ellipt_xy = 1 
 /
 &galaxy_input_var_thick_dust_disk
 tau1= 3.17,    !! B-band tau
