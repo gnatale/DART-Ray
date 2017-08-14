@@ -406,6 +406,7 @@ CONTAINS
     integer :: i
     integer :: iw
     logical :: found_ref_grid
+    INTEGER(HSIZE_T)  :: dims_read(0:0),maxdims(0:0)  ! Dataset dimensions
 
     if (main_prc) print *, 'Reading lambda grids...'
 
@@ -432,7 +433,20 @@ CONTAINS
        call make_dims(dsetname(i),rank(i))
     
        CALL h5dopen_f(file_id, dsetname(i), dset_id, error)
+
+       call h5dget_space_f(dset_id,dspace_id,error)
+
+       ! Getting dims from dataspace
+       call h5sget_simple_extent_dims_f(dspace_id, dims_read, maxdims, error)  
     
+       ! check expected dimensions
+       if (count(dims_read /= dims) > 0) then 
+          if (main_prc) print *, 'ERROR(read_lambda_grid): dimensions of lambda grid does not coincide with expected dimensions. Are you sure you used the right main/lambda grids ?'
+          print *, 'Read dimensions =', dims_read
+          print *, 'Expected dimesions = ', dims
+          STOP
+       endif
+
        if (dsetname(i) == 'dens' ) then
           CALL h5dread_f(dset_id,H5T_NATIVE_DOUBLE , dens, dims, error)
        else if (dsetname(i) == 'dens_stars' ) then
@@ -3066,13 +3080,13 @@ subroutine check_input
   endif
   
   
-  ! tau_cell_max
+  ! tau_cell_max !NOTE: this is not used for the moment. 
   if (tau_cell_max < 0 .or. tau_cell_max > 0.5) then
      !print *, 'STOP: Invalid tau_cell_max value'
      !print *, 'tau_cell_max = ', tau_cell_max
      !print *, 'Allowed range = [0,0.5]'
      !error = .TRUE.
-     if (main_prc) print *, 'WARNING: tau_cell_max not specified or outside allowed range of values (0,0.5). Set default value tau_cell_max = 0.05.'
+   !  if (main_prc) print *, 'WARNING: tau_cell_max not specified or outside allowed range of values (0,0.5). Set default value tau_cell_max = 0.05.'
      tau_cell_max = 0.05 
   endif
 

@@ -17,7 +17,7 @@ FCFLAGS= -O3 -ipo -fopenmp -traceback
 #FCFLAGS=  -fopenmp -fno-inline-functions -pg -O3 -ipo
 #LDFLAGS += -lmpi
 
-all: create_adap_grid_trustI create_adap_grid_magtar create_adap_grid_galaxy dartray_trustI  dartray_galaxy create_adap_grid_Nbody_SPH dartray_Nbody_SPH dartray_magtar
+all: create_adap_grid_trustI create_adap_grid_magtar create_adap_grid_galaxy dartray_trustI  dartray_galaxy create_adap_grid_Nbody_SPH dartray_Nbody_SPH dartray_magtar create_adap_grid_2dto3d
 
 create_adap_grid_trustI:  smooth_grid_routines.o create_adap_grid_trustI.f90 user_routines_trustI.o io_routines.o ray_list.o rt_routines.o healpix_routines.o sed_routines.o
 	$(FC) $(FCFLAGS) -o create_adap_grid_trustI  smooth_grid_routines.o user_routines_trustI.o io_routines.o rt_routines.o ray_list.o healpix_routines.o  sed_routines.o create_adap_grid_trustI.f90
@@ -33,6 +33,9 @@ create_adap_grid_magtar:  smooth_grid_routines.o create_adap_grid_magtar.f90 use
 
 create_adap_grid_galaxy:  smooth_grid_routines.o create_adap_grid_galaxy.f90 user_routines_galaxy.o io_routines.o rt_routines.o ray_list.o healpix_routines.o sed_routines.o
 	$(FC) $(FCFLAGS) -o create_adap_grid_galaxy  smooth_grid_routines.o user_routines_galaxy.o io_routines.o rt_routines.o ray_list.o healpix_routines.o sed_routines.o create_adap_grid_galaxy.f90
+
+create_adap_grid_2dto3d:  smooth_grid_routines.o create_adap_grid_2dto3d.f90 user_routines_2dto3d.o io_routines.o rt_routines.o ray_list.o healpix_routines.o sed_routines.o
+	$(FC) $(FCFLAGS) -o create_adap_grid_2dto3d  smooth_grid_routines.o user_routines_2dto3d.o io_routines.o rt_routines.o ray_list.o healpix_routines.o sed_routines.o create_adap_grid_2dto3d.f90
 
 dartray_trustI: dartray_trustI.f90 user_routines_trustI.o io_routines.o smooth_grid_routines.o rt_routines.o ray_list.o healpix_routines.o dartray_hub.o sed_routines.o visual_routines.o
 	$(FC) $(FCFLAGS) -o dartray_trustI  user_routines_trustI.o io_routines.o smooth_grid_routines.o rt_routines.o ray_list.o healpix_routines.o dartray_hub.o sed_routines.o visual_routines.o dartray_trustI.f90
@@ -66,6 +69,9 @@ rt_routines.o: rt_routines.f90 smooth_grid_routines.o healpix_routines.o ray_lis
 
 user_routines_galaxy.o: user_routines_galaxy.f90 smooth_grid_routines.o io_routines.o
 	$(FC) $(FCFLAGS) -c user_routines_galaxy.f90
+
+user_routines_2dto3d.o: user_routines_2dto3d.f90 smooth_grid_routines.o io_routines.o
+	$(FC) $(FCFLAGS) -c user_routines_2dto3d.f90
 
 ray_list.o: ray_list.f90 healpix_routines.o smooth_grid_routines.o
 	$(FC) $(FCFLAGS) -c ray_list.f90

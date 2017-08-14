@@ -5,6 +5,7 @@ create_adap_grid_Nbody_SPH
 create_adap_grid_galaxy
 create_adap_grid_magtar
 create_adap_grid_trustI
+create_adap_grid_2dto3d
 dartray_Nbody_SPH
 dartray_galaxy
 dartray_magtar

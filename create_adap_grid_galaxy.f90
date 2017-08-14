@@ -159,6 +159,11 @@ CONTAINS
 
     end do
 
+    if (i > lnum -1) then 
+       print *, 'ERROR(set_hs_disk): lambda_in not found in lambda_arr_SI array!'
+       stop
+    endif
+
     hs_disk = hs_disk_arr(i)
     
  end subroutine set_hs_disk
