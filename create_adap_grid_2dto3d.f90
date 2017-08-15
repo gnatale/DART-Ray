@@ -17,7 +17,7 @@ PROGRAM create_adap_grid_2dto3d
   call input_initialize
 
   ! read input file 
-  call read_input_model !XXX modify this sub XXX 
+  call read_input_model
 
   ! read lambda grid 
   call read_lambda_list
@@ -39,7 +39,7 @@ PROGRAM create_adap_grid_2dto3d
      ! --------------------------------------------------------------------! 
      
      lambda_in = lambda_ref_SI
-     call set_2dto3d_input   ! XXX modify this sub XXX 
+     call set_2dto3d_input   
      
      ! --------------------------------------------------------------------! 
      ! create grid arrays     
@@ -67,9 +67,6 @@ case(.TRUE.)
         
 end select
 
-
-!XXXX The rest of the program is not needed if lambda grids do not have to be calculated XXX 
-
 ! ---------------------------------------------------------------------!
 ! loop on lambdas to make monochromatic emissivity/ density tables
 
@@ -94,7 +91,7 @@ do il=i0(1), i1(1)
 
    ! set star and dust coefficients 
    lambda_in = lambda
-   call set_2dto3d_input  ! XXX modify this sub XXX 
+   call set_2dto3d_input  
   
    ! create grids
    call make_lambda_grid    
@@ -137,7 +134,7 @@ CONTAINS
        cellsize=csize(i)
 
        
-       call calc_dens(x,y,z,cellsize,av_rho_dust, av_rho_stars)  !XXX modify this sub XXX 
+       call calc_dens(x,y,z,cellsize,av_rho_dust, av_rho_stars)  
      
        dens(i)=av_rho_dust              
        dens_stars(i)=av_rho_stars
@@ -217,8 +214,6 @@ mean_dlum=mean_dlum/k
 ! print grid info on a file
 open(newunit=id, file=trim(adjustl(dir_grid))//trim(adjustl(grid_info_file)), status='unknown') 
 
-!XXX add here more parameters to be written on the info file XXXX 
-
    write(id,*)
    write(id,*)  '! 3D grid parameters '  
    write(id,*)  'modelsize = ', modelsize
@@ -260,7 +255,7 @@ end subroutine print_info_file
       call calc_cellsize(cellsize,nlevel)
 
       
-      call calc_dens(x,y,z,cellsize,av_rho_dust,av_rho_stars)  !XXX modify this sub XXX 
+      call calc_dens(x,y,z,cellsize,av_rho_dust,av_rho_stars)  
 
          dens(0) = av_rho_dust
          dens_stars(0) = av_rho_stars
@@ -465,7 +460,7 @@ endif
       y=ccoord(2,tot_ncell)
       z=ccoord(3,tot_ncell)
          
-         call calc_dens(x,y,z,cellsize,av_rho_dust,av_rho_stars)   !XXX modify this sub XXX 
+         call calc_dens(x,y,z,cellsize,av_rho_dust,av_rho_stars)   
        
          dens(tot_ncell)=av_rho_dust    
          dens_stars(tot_ncell)=av_rho_stars

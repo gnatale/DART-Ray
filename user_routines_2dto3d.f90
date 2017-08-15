@@ -74,8 +74,6 @@ integer, parameter :: quantity_ext = 1
 
 ! input namelist
 
-!XXX add model input parameters in the namelist blocks (you can create new blocks if you want) XXXX 
-
 namelist /m2dto3d_input_strings/ label_model_lambda_grid, dir_grid, grid_file, grid_info_file, file_lambda_list,units_lambda, dust_model,dust_opacity_tables, file_gra_fa, file_sil_fa, file_pah_neu_fa, file_pah_ion_fa, file_av_opacities, file_q_gra, file_q_sil, file_q_pah_neu, file_q_pah_ion, subdivision_criteria, dir_grid_2d, label_model_2d
 
 namelist /m2dto3d_input_var/ lambda_ref, lambda_min, lambda_max, modelsize, base, max_ncell, max_lvl, min_lvl,  max_dtau, max_dlum, n_dust_size_qabs, n_dust_wave_qabs, z_subd_lim, R_subd_lim
