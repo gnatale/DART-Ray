@@ -1,0 +1,32 @@
+&m2dto3d_input_strings
+label_model_lambda_grid='m2dto3d_ex1',
+dir_grid='./2DTO3D_GRIDS/EX1',
+dir_grid_2d = './2DTO3D_GRIDS/EX1'
+label_model_2d= 'wd01_q06_t37_s100_no35_bd45_hd5200_zd140_hd1_3200_zd1_50_hs3200_zs140_hs1_3200_zs1_50_reff400_ell60_sca_irr1',
+grid_file='grid_m2dto3d_ex1_main.h5',
+grid_info_file='grid_m2dto3d_ex1_info.dat',
+file_lambda_list='lambda_list_pt11_dust.dat',
+units_lambda = 'um',
+dust_model = 'DraineLi06',
+file_av_opacities = './DUST_OPACITY/DraineLi06/kappagrainwd01_q06_effective.dat'
+subdivision_criteria = 'standard' 
+/ 
+&m2dto3d_input_var
+lambda_ref= 12,   
+lambda_min= 12.,    
+lambda_max= 850.,
+modelsize = 28000. ,
+base=3,3,   
+max_ncell=3.E6,  
+max_lvl=4,
+min_lvl=2, 
+max_dtau=0.01,
+max_dlum=0.5E-6
+z_subd_lim = 50 
+R_subd_lim = 4000
+/
+&m2dto3d_input_logical
+input_av_opacities = .TRUE.
+/
+
+

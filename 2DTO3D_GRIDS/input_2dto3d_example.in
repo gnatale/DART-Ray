@@ -1,0 +1,53 @@
+&dartray_input_strings 
+label_model_lambda_grid='m2dto3d_ex1',
+label_model_out='m2dto3d_ex1',
+label_model_out_i_obs = 'm2dto3d_ex1'
+grid_file='grid_m2dto3d_ex1_main.h5',
+file_pos_obs = 'pos_obs_sun.dat',
+file_lambda_list='lambda_list_pt11_dust.dat', 
+dir_runs='./RUNS/2DTO3D_EX1',
+dir_grid='./2DTO3D_GRIDS/EX1',
+rt_algorithm='i_obs'
+units_lambda = 'um',
+dust_model = 'DraineLi06',
+units_csize = 'pc',
+units_luminosity = 'W/Hz',
+file_av_opacities = './DUST_OPACITY/DraineLi06/kappagrainwd01_q06_effective.dat'
+/
+&dartray_input_var
+lambda_ref = 12.
+kp_sca_max=1,    
+rad_lim=0.1, 
+accuracy=0.10, 
+conv_en_lim=0.01,
+bm_par=5,
+bm_par_sca=5, 
+bm_par_max=2000, 
+max_lambda_stars = 850,
+min_lambda_dust = 3.,
+dist_obs = 10E3
+z_wall_coord = 0.3, 0.7, 
+npixel_maps = 500
+map_size_factor = 0.7
+kp_maps = 8
+/
+&dartray_input_logical
+use_lambda_grid = .TRUE.,
+use_dir_out = .FALSE.,
+use_pos_obs = .TRUE.,
+restore_file_mpi = .TRUE.,
+print_maps = .TRUE.,
+print_maps_in = .TRUE.,
+print_output_part1 = .FALSE.,
+print_output_part2 = .TRUE.,
+print_scaspe_part2 = .FALSE.,
+print_psel_av = .FALSE.,
+input_av_opacities = .TRUE.,
+sequential_scattering = .TRUE.,
+no_communications = .TRUE.
+z_wall_on = .TRUE. 
+no_dust_rt = .TRUE.
+only_direct_rt = .TRUE. 
+/
+
+  
