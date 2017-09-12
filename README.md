@@ -7,3 +7,5 @@ Please refer to the User guide on the code website for instructions on how to in
 http://www.star.uclan.ac.uk/~gn/dartray_doc/index.html 
 
 The code is released under the GNU general public license version 3. 
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
