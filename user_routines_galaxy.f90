@@ -1695,7 +1695,9 @@ do i=0,steps-1
                sum_temp=sum_temp+zc/zc_r*(exp(-rad/hc))*exp(-abs(zk)/zc_r)   
             else 
                sum_temp=sum_temp+(rad/r1*(1-chi_par) + chi_par)*zc/zc_r*(exp(-r1/hc))*exp(-abs(zk)/zc_r)              
-            endif   
+            endif
+
+            if (chi_par < 0. .and. sum_temp < 0) sum_temp = 0 ! in case of negative chi_par, the values could become negative at small radii 
 
          else if (disk_type_ID == flared_sech2z_ID) then 
 
@@ -1708,6 +1710,8 @@ do i=0,steps-1
                sum_temp=sum_temp+(rad/r1*(1-chi_par) + chi_par)*zc/zc_r*(exp(-r1/hc))*(cosh(-(zk)/zc_r))**(-2)              
             endif
 
+            if (chi_par < 0. .and. sum_temp < 0) sum_temp = 0 ! in case of negative chi_par, the values could become negative at small radii 
+            
 
 !!$         else if (disk_type == 'grad05_zflat') then 
 !!$
