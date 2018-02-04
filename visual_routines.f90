@@ -607,7 +607,7 @@ subroutine map_projection(idir, obs_vec, xi_dir, yi_dir)
      
      !$OMP PARALLEL DEFAULT(NONE), &
      !$OMP PRIVATE(i,r, ix_p, iy_p, ilvl, delta_p, ix, iy, ix0, ix1, iy0, iy1, il, iw, map_arr_hd_thread, map_section, zero_value), &
-     !$OMP SHARED(tot_ncell, cchild, i_obs_arr,obs_vec, xi_dir, yi_dir, xpp,ypp, im0, im1, lnum_node_maps, texture_arr, csize, area_pixel_hd, idir, ccoord, lvl, map_arr_hd, npixel_maps_hd, tot_flux_old, map_arr_hd_old, npixel_maps, map_arr,map_arr_temp, iq_maps_id, ind_out_maps, ilevel) 
+     !$OMP SHARED(tot_ncell, cchild, i_obs_arr,obs_vec, xi_dir, yi_dir, xpp,ypp, im0, im1, lnum_node_maps, texture_arr, csize, area_pixel_hd, idir, ccoord, lvl, map_arr_hd, npixel_maps_hd, tot_flux_old, map_arr_hd_old, npixel_maps, map_arr,map_arr_temp, iq_maps_id, ind_out_maps, ilevel, chunk_size, nproc)
 
      allocate(map_arr_hd_thread(0:npixel_maps_hd-1, 0:npixel_maps_hd-1, 0:lnum_node_maps-1))
      map_arr_hd_thread = 0 
@@ -937,7 +937,7 @@ subroutine map_in_projection(idir)
 
   !$OMP PARALLEL DEFAULT(NONE), &
   !$OMP PRIVATE(i, il, iw,map_in_arr_temp, rc, rel_vec, dist2, cellsize, omega_cell, omega_ratio, theta, phi, ip, outcube, n_px ), &
-  !$OMP SHARED(tot_ncell, npix_maps, lnum_node_maps, cchild, i_obs_in_arr, idir, ccoord, csize, omega_hp,  nside_map, map_in_arr, ro, id_mpi, iq_maps_id, ind_out_maps) 
+  !$OMP SHARED(tot_ncell, npix_maps, lnum_node_maps, cchild, i_obs_in_arr, idir, ccoord, csize, omega_hp,  nside_map, map_in_arr, ro, id_mpi, iq_maps_id, ind_out_maps, chunk_size)
   
   allocate(mproj(0:npix_maps-1), map_in_arr_temp(0:npix_maps-1, 0:lnum_node_maps-1))
   allocate(iq_px(0:npix_maps-1))

@@ -3,11 +3,11 @@ FC = HDF5_FLINKER=mpif90 HDF5_FC=mpif90   h5fc
 #FC = h5fc
 # standard intel compilation
 #FCFLAGS = -g -O3 -xHost -align -ansi-alias -mcmodel=medium -traceback -fopenmp -lmpi
-FCFLAGS= -O3 -ipo -fopenmp -traceback
+#FCFLAGS= -O3 -ipo -fopenmp -traceback
 #FCFLAGS= -O3  -fopenmp -traceback
 #FCFLAGS= -O3 -ipo -fopenmp -heap-arrays
 # standard gfortran compilation 
-#FCFLAGS= -O3 -fopenmp -ffree-line-length-none
+FCFLAGS= -O3 -fopenmp -ffree-line-length-none
 # compilation with error checking and traceback
 #FCFLAGS= -O3 -fopenmp -traceback -check all  
 #FCFLAGS= -O3 -fopenmp -traceback -check all -check noarg_temp_created

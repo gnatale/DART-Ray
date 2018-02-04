@@ -387,7 +387,7 @@ CONTAINS
 
     !$OMP PARALLEL DEFAULT(NONE), &
     !$OMP PRIVATE(im, i, abs_en, t_dust, j) &
-    !$OMP SHARED(lnum, lnum_stars, lnum_dust,np_mpi, id_mpi, kabs_arr, u_final_uv_opt, iterations_dustem, delta_lambda_bin_stars, delta_lambda_bin_dust,dens_stars_arr, kext_ref, dens_ref, lambda_arr_SI, lnum_tot,i0, cchild, tot_ncell, u_final_arr, main_prc)
+    !$OMP SHARED(lnum, lnum_stars, lnum_dust,np_mpi, id_mpi, kabs_arr, u_final_uv_opt, iterations_dustem, delta_lambda_bin_stars, delta_lambda_bin_dust,dens_stars_arr, kext_ref, dens_ref, lambda_arr_SI, lnum_tot,i0, cchild, tot_ncell, u_final_arr, main_prc, chunk_size)
 
     allocate(abs_int_rad_stars(0:lnum_stars-1), abs_int_rad_dust(0:lnum_dust-1))
     abs_int_rad_stars = 0
@@ -442,7 +442,7 @@ CONTAINS
 
    !$OMP PARALLEL DEFAULT(NONE), &
    !$OMP PRIVATE(i,j,ic,ig,abs_en,t_dust,imax,im), &
-   !$OMP SHARED(tot_ncell,cchild,n_dust_comp,qabs_arr_fa,n_dust_size,dust_fa,delta_dust_size,tau_nh_ref,lambda_arr_SI,dust_size_fa,n_dust_maxsize_fa,lnum,np_mpi, id_mpi, dens_stars_arr, lnum_tot, i0,delta_lambda_bin_stars, delta_lambda_bin_dust, iterations_dustem, u_final_uv_opt, dens_ref, lnum_stars, lnum_dust,u_final_arr)
+   !$OMP SHARED(tot_ncell,cchild,n_dust_comp,qabs_arr_fa,n_dust_size,dust_fa,delta_dust_size,tau_nh_ref,lambda_arr_SI,dust_size_fa,n_dust_maxsize_fa,lnum,np_mpi, id_mpi, dens_stars_arr, lnum_tot, i0,delta_lambda_bin_stars, delta_lambda_bin_dust, iterations_dustem, u_final_uv_opt, dens_ref, lnum_stars, lnum_dust,u_final_arr, chunk_size)
 
    allocate(dust_em_arr_fa(0:n_dust_maxsize_fa-1,0:lnum-1),tot_dust_em(0:lnum-1))
    dust_em_arr_fa = 0 
@@ -558,7 +558,7 @@ CONTAINS
 
    !$OMP PARALLEL DEFAULT(NONE), &
    !$OMP PRIVATE(i,j,it,ic,ig,abs_en,t_dust,imax,im), &
-   !$OMP SHARED(tot_ncell,cchild,n_dust_comp,qabs_arr_fa,n_dust_size,dust_fa,delta_dust_size,tau_nh_ref,lambda_arr_SI,dust_size_fa,n_dust_maxsize_fa,lnum,np_mpi, id_mpi, dens_stars_arr, lnum_tot, i0,delta_lambda_bin_stars, delta_lambda_bin_dust, iterations_dustem, u_final_uv_opt, dens_ref, lnum_stars, lnum_dust,u_final_arr)
+   !$OMP SHARED(tot_ncell,cchild,n_dust_comp,qabs_arr_fa,n_dust_size,dust_fa,delta_dust_size,tau_nh_ref,lambda_arr_SI,dust_size_fa,n_dust_maxsize_fa,lnum,np_mpi, id_mpi, dens_stars_arr, lnum_tot, i0,delta_lambda_bin_stars, delta_lambda_bin_dust, iterations_dustem, u_final_uv_opt, dens_ref, lnum_stars, lnum_dust,u_final_arr, chunk_size)
    
 !!$   allocate(dust_em_arr_fa(0:n_dust_maxsize_fa-1,0:lnum-1),tot_dust_em(0:lnum-1))
 !!$   dust_em_arr_fa = 0 
